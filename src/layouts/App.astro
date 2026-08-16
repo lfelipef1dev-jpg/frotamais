@@ -1,6 +1,9 @@
 ---
 import UserMenu from '../components/auth/UserMenu';
+import NotificationBell from '../components/dashboard/NotificationBell';
 import { canAccessRoute, ROLE_LABELS } from '../lib/permissions';
+import { getDb } from '../db/client';
+import { getAlerts, getVehicles } from '../db/queries';
 
 interface Props {
   title: string;
@@ -11,6 +14,18 @@ const pathname = Astro.url.pathname;
 const user = Astro.locals.user;
 const userRole = user?.role ?? 'admin';
 
+// Carrega alertas para o sino de notificacoes
+let alertsForBell: any[] = [];
+try {
+  const db = getDb(Astro.locals.runtime.env.DB);
+  const alerts = await getAlerts(db);
+  const vehicles = await getVehicles(db);
+  const vById = Object.fromEntries(vehicles.map((v) => [v.id, v]));
+  alertsForBell = alerts.map((a) => ({ ...a, vehiclePlate: vById[a.vehicleId]?.plate }));
+} catch {
+  // ignore em paginas que nao precisam
+}
+
 const allMenu = [
   { label: 'Dashboard', href: '/app/dashboard', icon: 'M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6' },
   { label: 'Veiculos', href: '/app/vehicles', icon: 'M3 8l9-5 9 5M3 8v10l9 5 9-5V8M3 8l9 5 9-5' },
@@ -20,6 +35,7 @@ const allMenu = [
   { label: 'Combustivel', href: '/app/fuel', icon: 'M3 4h18v6H3V4zm0 10h18v6H3v-6z' },
   { label: 'Alertas', href: '/app/alerts', icon: 'M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9' },
   { label: 'Inspecoes', href: '/app/inspections', icon: 'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z' },
+  { label: 'Geofences', href: '/app/geofences', icon: 'M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z M15 11a3 3 0 11-6 0 3 3 0 016 0z' },
   { label: 'Relatorios', href: '/app/reports', icon: 'M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z' },
   { label: 'Usuarios', href: '/app/users', icon: 'M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z' },
 ];
@@ -64,11 +80,16 @@ const menu = allMenu.filter((item) => canAccessRoute(userRole, item.href));
       <main class="flex-1 min-w-0">
         <div class="h-16 bg-brand-surface border-b border-brand-border flex items-center justify-between px-4 md:px-6">
           <h1 class="font-bold text-lg">{title}</h1>
-          {user ? (
-            <UserMenu client:only="react" name={user.name} email={user.email} />
-          ) : (
-            <div class="w-9 h-9 rounded-full bg-brand-primary/10 text-brand-primary flex items-center justify-center font-bold text-sm">OP</div>
-          )}
+          <div class="flex items-center gap-3">
+            {alertsForBell.length > 0 && (
+              <NotificationBell client:only="react" initialAlerts={alertsForBell} />
+            )}
+            {user ? (
+              <UserMenu client:only="react" name={user.name} email={user.email} />
+            ) : (
+              <div class="w-9 h-9 rounded-full bg-brand-primary/10 text-brand-primary flex items-center justify-center font-bold text-sm">OP</div>
+            )}
+          </div>
         </div>
         <div class="p-4 md:p-6">
           <slot />

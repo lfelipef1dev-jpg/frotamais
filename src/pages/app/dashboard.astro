@@ -2,14 +2,16 @@
 import App from '../../layouts/App.astro';
 import { KPICard } from '../../components/dashboard/KPICard';
 import FleetMap from '../../components/dashboard/FleetMap';
+import BarChart from '../../components/dashboard/BarChart';
 import { getDb } from '../../db/client';
-import { getFleetSummary, getVehicles } from '../../db/queries';
+import { getFleetSummary, getVehicles, getFuelLogs } from '../../db/queries';
 
 export const prerender = false;
 
 const db = getDb(Astro.locals.runtime.env.DB);
 const summary = await getFleetSummary(db);
 const vehicles = await getVehicles(db);
+const fuelLogs = await getFuelLogs(db);
 
 const mapVehicles = vehicles.map((v) => ({
   id: v.id,
@@ -28,6 +30,16 @@ const initialPositions = vehicles
     lat: v.currentLat!,
     lng: v.currentLng!,
   }));
+
+// Dados reais para o grafico de combustivel
+const fuelByVehicle = vehicles.map((v) => {
+  const logs = fuelLogs.filter((f) => f.vehicleId === v.id);
+  return {
+    label: v.plate,
+    value: Math.round(logs.reduce((sum, f) => sum + f.liters, 0)),
+    color: '#1E3A8A',
+  };
+}).filter((d) => d.value > 0).sort((a, b) => b.value - a.value);
 ---
 
 <App title="Dashboard">
@@ -66,14 +78,7 @@ const initialPositions = vehicles
   <div class="grid lg:grid-cols-2 gap-6 mb-8">
     <section class="bg-brand-surface rounded-xl p-6 border border-brand-border" aria-labelledby="consumo-titulo">
       <h3 id="consumo-titulo" class="font-bold text-brand-text mb-4">Consumo de combustivel (litros)</h3>
-      <svg viewBox="0 0 300 120" class="w-full h-40" role="img" aria-label="Grafico de consumo de combustivel">
-        <rect x="10" y="10" width="40" height="80" fill="#1E3A8A" rx="4" />
-        <rect x="65" y="30" width="40" height="60" fill="#1E3A8A" rx="4" />
-        <rect x="120" y="45" width="40" height="45" fill="#1E3A8A" rx="4" />
-        <rect x="175" y="25" width="40" height="65" fill="#1E3A8A" rx="4" />
-        <rect x="230" y="15" width="40" height="75" fill="#1E3A8A" rx="4" />
-      </svg>
-      <p class="sr-only">Veiculos consumiram litros conforme dados do D1.</p>
+      <BarChart client:only="react" data={fuelByVehicle} title="" unit="L" />
       <p class="text-xs text-brand-text-light mt-2">Total de {summary.totalFuelLiters.toFixed(1)} litros — R$ {summary.totalFuelCost.toFixed(2)} (valores simulados)</p>
     </section>
 

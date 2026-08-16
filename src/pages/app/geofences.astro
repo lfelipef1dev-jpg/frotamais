@@ -1,0 +1,91 @@
+---
+import App from '../../layouts/App.astro';
+import { getDb } from '../../db/client';
+import { getGeofences, getVehicles } from '../../db/queries';
+import GeofenceMap from '../../components/dashboard/GeofenceMap';
+
+export const prerender = false;
+
+const db = getDb(Astro.locals.runtime.env.DB);
+const geofences = await getGeofences(db);
+const vehicles = await getVehicles(db);
+
+const vehiclePositions = vehicles
+  .filter((v) => v.currentLat && v.currentLng)
+  .map((v) => ({ id: v.id, plate: v.plate, status: v.status, lat: v.currentLat, lng: v.currentLng }));
+
+const typeLabels: Record<string, string> = {
+  depot: 'Centro de distribuicao',
+  restricted: 'Area restrita',
+  allowed: 'Area permitida',
+  customer: 'Cliente',
+};
+
+const typeColors: Record<string, string> = {
+  depot: 'bg-blue-100 text-blue-700',
+  restricted: 'bg-red-100 text-red-700',
+  allowed: 'bg-green-100 text-green-700',
+  customer: 'bg-purple-100 text-purple-700',
+};
+---
+
+<App title="Geofences">
+  <h2 class="text-xl font-bold text-brand-text mb-2">Areas de controle (Geofences)</h2>
+  <p class="text-sm text-brand-text-secondary mb-6">Zonas geograficas definidas para monitoramento de veiculos.</p>
+
+  <div class="grid sm:grid-cols-3 gap-4 mb-6">
+    <div class="bg-brand-surface rounded-xl p-5 border border-brand-border">
+      <p class="text-sm text-brand-text-secondary">Total de areas</p>
+      <p class="text-2xl font-extrabold text-brand-text mt-1">{geofences.length}</p>
+    </div>
+    <div class="bg-brand-surface rounded-xl p-5 border border-brand-border">
+      <p class="text-sm text-brand-text-secondary">Ativas</p>
+      <p class="text-2xl font-extrabold text-green-500 mt-1">{geofences.filter((g) => g.active).length}</p>
+    </div>
+    <div class="bg-brand-surface rounded-xl p-5 border border-brand-border">
+      <p class="text-sm text-brand-text-secondary">Inativas</p>
+      <p class="text-2xl font-extrabold text-slate-400 mt-1">{geofences.filter((g) => !g.active).length}</p>
+    </div>
+  </div>
+
+  <div class="bg-brand-surface rounded-xl border border-brand-border p-4 mb-6">
+    <h3 class="font-bold text-brand-text mb-3">Mapa de geofences e veiculos</h3>
+    <GeofenceMap client:only="react" geofences={geofences} vehicles={vehiclePositions} />
+  </div>
+
+  <div class="bg-brand-surface rounded-xl border border-brand-border overflow-x-auto">
+    <table class="min-w-full text-sm">
+      <thead>
+        <tr class="text-left text-brand-text-secondary border-b border-brand-border bg-brand-bg">
+          <th class="px-6 py-3 font-medium">Nome</th>
+          <th class="px-6 py-3 font-medium">Tipo</th>
+          <th class="px-6 py-3 font-medium">Raio</th>
+          <th class="px-6 py-3 font-medium">Coordenadas</th>
+          <th class="px-6 py-3 font-medium">Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        {geofences.map((g) => (
+          <tr class="border-b border-brand-border last:border-0">
+            <td class="px-6 py-3 font-medium text-brand-text">{g.name}</td>
+            <td class="px-6 py-3">
+              <span class={`inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold ${typeColors[g.type] ?? 'bg-slate-100 text-slate-700'}`}>
+                {typeLabels[g.type] ?? g.type}
+              </span>
+            </td>
+            <td class="px-6 py-3 text-brand-text-secondary">{g.radius} m</td>
+            <td class="px-6 py-3 text-brand-text-secondary">{g.centerLat.toFixed(4)}, {g.centerLng.toFixed(4)}</td>
+            <td class="px-6 py-3">
+              <span class={`inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold ${g.active ? 'bg-green-100 text-green-700' : 'bg-slate-100 text-slate-700'}`}>
+                {g.active ? 'Ativo' : 'Inativo'}
+              </span>
+            </td>
+          </tr>
+        ))}
+        {geofences.length === 0 && (
+          <tr><td colspan="5" class="px-6 py-8 text-center text-brand-text-secondary">Nenhuma geofence cadastrada.</td></tr>
+        )}
+      </tbody>
+    </table>
+  </div>
+</App>

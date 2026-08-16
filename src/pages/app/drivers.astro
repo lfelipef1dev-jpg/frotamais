@@ -3,41 +3,22 @@ import App from '../../layouts/App.astro';
 import { getDb } from '../../db/client';
 import { getDrivers, getSafetyEvents } from '../../db/queries';
 import { calculateSafetyScore } from '../../lib/safety-score';
+import DriversManager from '../../components/dashboard/DriversManager';
 
 export const prerender = false;
 
 const db = getDb(Astro.locals.runtime.env.DB);
 const drivers = await getDrivers(db);
 const allEvents = await getSafetyEvents(db);
+
+const driversWithScore = drivers.map((d) => ({
+  ...d,
+  calculatedScore: calculateSafetyScore(allEvents.filter((e) => e.driverId === d.id)),
+}));
 ---
 
 <App title="Motoristas">
-  <h2 class="text-xl font-bold text-brand-text mb-6">Motoristas</h2>
-  <p class="text-sm text-brand-text-secondary mb-4">
-    Score de seguranca calculado em tempo real a partir de eventos de telemetria (excesso de velocidade, frenagem brusca, etc).
-  </p>
-  <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-    {drivers.map((d) => {
-      const calculatedScore = calculateSafetyScore(allEvents.filter((e) => e.driverId === d.id));
-      return (
-        <a href={`/app/drivers/${d.id}`} class="bg-brand-surface rounded-xl p-5 border border-brand-border hover:border-brand-primary transition block">
-          <div class="flex items-center gap-3 mb-3">
-            <div class="w-10 h-10 rounded-full bg-brand-primary/10 text-brand-primary flex items-center justify-center font-bold">
-              {d.name.split(' ').map((n) => n[0]).slice(0, 2).join('')}
-            </div>
-            <div>
-              <p class="font-bold text-brand-text">{d.name}</p>
-              <p class="text-xs text-brand-text-secondary">{d.phone}</p>
-            </div>
-          </div>
-          <div class="text-sm text-brand-text-secondary space-y-1">
-            <p>Score calculado: <span class="font-semibold text-brand-text">{calculatedScore}/100</span> (tempo real)</p>
-            <p>Score base: <span class="text-brand-text">{d.safetyScore}/100</span></p>
-            <p>Viagens: {d.totalTrips} | {d.totalKm.toLocaleString('pt-BR')} km</p>
-            <p>CNH valida ate: {new Date(d.licenseExpiry).toLocaleDateString('pt-BR')}</p>
-          </div>
-        </a>
-      );
-    })}
-  </div>
+  <h2 class="text-xl font-bold text-brand-text mb-2">Motoristas</h2>
+  <p class="text-sm text-brand-text-secondary mb-6">Score de seguranca calculado em tempo real a partir de eventos de telemetria.</p>
+  <DriversManager client:only="react" initialDrivers={driversWithScore} />
 </App>

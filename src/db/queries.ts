@@ -116,3 +116,7 @@ export async function getTripsForDriver(db: Database, driverId: string) {
 export async function getAlertsForVehicle(db: Database, vehicleId: string) {
   return db.select().from(schema.alerts).where(eq(schema.alerts.vehicleId, vehicleId)).all();
 }
+
+export async function getGeofences(db: Database) {
+  return db.select().from(schema.geofences).all();
+}
