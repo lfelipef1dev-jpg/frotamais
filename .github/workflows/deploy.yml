@@ -24,6 +24,9 @@ jobs:
       - name: Build Astro
         run: npm run build
 
+      - name: Prepare assetsignore
+        run: echo "_worker.js" > dist/.assetsignore
+
       - name: Deploy to Cloudflare Workers
         uses: cloudflare/wrangler-action@v3
         with:
