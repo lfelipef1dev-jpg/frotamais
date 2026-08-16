@@ -1,29 +1,53 @@
 ---
 import App from '../../layouts/App.astro';
-import { tripsData, vehiclesData, driversData } from '../../data/seed';
+import RoutePlanner from '../../components/dashboard/RoutePlanner';
+import { getDb } from '../../db/client';
+import { getTrips, getVehicles, getDrivers } from '../../db/queries';
 
-const vehiclesById = Object.fromEntries(vehiclesData.map(v => [v.id, v]));
-const driversById = Object.fromEntries(driversData.map(d => [d.id, d]));
+export const prerender = false;
+
+const db = getDb(Astro.locals.runtime.env.DB);
+const trips = await getTrips(db);
+const vehicles = await getVehicles(db);
+const drivers = await getDrivers(db);
+
+const vehiclesById = Object.fromEntries(vehicles.map((v) => [v.id, v]));
+const driversById = Object.fromEntries(drivers.map((d) => [d.id, d]));
+
+// Build VRP stops from completed trips' destinations
+const vrpStops = trips
+  .filter((t) => t.endLat != null && t.endLng != null)
+  .map((t) => ({
+    id: t.id,
+    name: t.endAddress ?? t.id,
+    lat: t.endLat!,
+    lng: Number(t.endLng),
+  }));
+
+const vrpVehicles = vehicles
+  .filter((v) => v.status === 'available' || v.status === 'in_use')
+  .map((v) => ({ id: v.id, name: v.plate }));
+
+const depot = {
+  id: 'depot-sp',
+  name: 'Deposito - Sao Paulo',
+  lat: -23.5505,
+  lng: -46.6333,
+};
 ---
 
 <App title="Rotas">
-  <h2 class="text-xl font-bold text-brand-text mb-6">Roteirização e viagens</h2>
+  <h2 class="text-xl font-bold text-brand-text mb-6">Roteirizacao e viagens</h2>
+
   <div class="bg-brand-surface rounded-xl p-6 border border-brand-border mb-6">
-    <h3 class="font-bold text-brand-text mb-2">Otimizacao de rota</h3>
-    <p class="text-sm text-brand-text-secondary mb-4">A proxima rota sugerida conecta 5 pontos de entrega com menor distancia estimada.</p>
-    <div class="flex flex-wrap gap-2">
-      <span class="px-3 py-1 bg-brand-primary/10 text-brand-primary rounded-full text-sm font-medium">Sao Paulo</span>
-      <span class="px-3 py-1 bg-brand-bg text-brand-text-secondary rounded-full text-sm">→</span>
-      <span class="px-3 py-1 bg-brand-primary/10 text-brand-primary rounded-full text-sm font-medium">Campinas</span>
-      <span class="px-3 py-1 bg-brand-bg text-brand-text-secondary rounded-full text-sm">→</span>
-      <span class="px-3 py-1 bg-brand-primary/10 text-brand-primary rounded-full text-sm font-medium">Ribeirao Preto</span>
-      <span class="px-3 py-1 bg-brand-bg text-brand-text-secondary rounded-full text-sm">→</span>
-      <span class="px-3 py-1 bg-brand-primary/10 text-brand-primary rounded-full text-sm font-medium">Belo Horizonte</span>
-      <span class="px-3 py-1 bg-brand-bg text-brand-text-secondary rounded-full text-sm">→</span>
-      <span class="px-3 py-1 bg-brand-primary/10 text-brand-primary rounded-full text-sm font-medium">Rio de Janeiro</span>
-    </div>
-    <p class="text-xs text-brand-text-light mt-4">Rota calculada com Nearest Neighbor — demo.</p>
+    <RoutePlanner
+      client:only="react"
+      stops={vrpStops}
+      vehicles={vrpVehicles}
+      depot={depot}
+    />
   </div>
+
   <div class="bg-brand-surface rounded-xl border border-brand-border overflow-x-auto">
     <table class="min-w-full text-sm">
       <thead>
@@ -37,7 +61,7 @@ const driversById = Object.fromEntries(driversData.map(d => [d.id, d]));
         </tr>
       </thead>
       <tbody>
-        {tripsData.map(t => (
+        {trips.map((t) => (
           <tr class="border-b border-brand-border last:border-0">
             <td class="px-6 py-3 text-brand-text-secondary">{t.startAddress}</td>
             <td class="px-6 py-3 text-brand-text-secondary">{t.endAddress}</td>

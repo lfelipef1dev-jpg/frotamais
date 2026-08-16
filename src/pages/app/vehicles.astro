@@ -1,8 +1,14 @@
 ---
 import App from '../../layouts/App.astro';
-import { vehiclesData, driversData } from '../../data/seed';
+import { getDb } from '../../db/client';
+import { getVehicles, getDrivers } from '../../db/queries';
 
-const driversById = Object.fromEntries(driversData.map(d => [d.id, d]));
+export const prerender = false;
+
+const db = getDb(Astro.locals.runtime.env.DB);
+const vehicles = await getVehicles(db);
+const drivers = await getDrivers(db);
+const driversById = Object.fromEntries(drivers.map((d) => [d.id, d]));
 ---
 
 <App title="Veiculos">
@@ -22,7 +28,7 @@ const driversById = Object.fromEntries(driversData.map(d => [d.id, d]));
         </tr>
       </thead>
       <tbody>
-        {vehiclesData.map(v => (
+        {vehicles.map((v) => (
           <tr class="border-b border-brand-border last:border-0">
             <td class="px-6 py-3 font-medium text-brand-text">{v.plate}</td>
             <td class="px-6 py-3 text-brand-text-secondary">{v.make} {v.model}</td>

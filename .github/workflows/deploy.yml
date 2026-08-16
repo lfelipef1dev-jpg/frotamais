@@ -27,9 +27,29 @@ jobs:
       - name: Prepare assetsignore
         run: echo "_worker.js" > dist/.assetsignore
 
+      - name: Apply D1 migrations
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: d1 migrations apply frotamais-db --remote
+
       - name: Deploy to Cloudflare Workers
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           command: deploy
+
+      - name: Set BETTER_AUTH_SECRET
+        run: npx wrangler secret put BETTER_AUTH_SECRET --name frotamais
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          WRANGLER_SECRET_INPUT: ${{ secrets.FROTAMAIS_AUTH_SECRET }}
+
+      - name: Set BETTER_AUTH_URL
+        run: echo "https://frotamais.expostacker.com.br" | npx wrangler secret put BETTER_AUTH_URL --name frotamais
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}

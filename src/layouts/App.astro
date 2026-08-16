@@ -1,18 +1,21 @@
 ---
+import UserMenu from '../components/auth/UserMenu';
+
 interface Props {
   title: string;
 }
 
 const { title } = Astro.props;
 const pathname = Astro.url.pathname;
+const user = Astro.locals.user;
 
 const menu = [
   { label: 'Dashboard', href: '/app/dashboard' },
-  { label: 'Veículos', href: '/app/vehicles' },
+  { label: 'Veiculos', href: '/app/vehicles' },
   { label: 'Motoristas', href: '/app/drivers' },
   { label: 'Rotas', href: '/app/routes' },
-  { label: 'Manutenção', href: '/app/maintenance' },
-  { label: 'Combustível', href: '/app/fuel' },
+  { label: 'Manutencao', href: '/app/maintenance' },
+  { label: 'Combustivel', href: '/app/fuel' },
   { label: 'Alertas', href: '/app/alerts' },
 ];
 ---
@@ -36,7 +39,7 @@ const menu = [
         </a>
         <nav class="flex-1 p-4 space-y-1" aria-label="Principal">
           {menu.map((item) => (
-            <a href={item.href} class={`block px-4 py-3 rounded-lg text-sm font-medium transition ${pathname === item.href ? 'bg-brand-primary text-white' : 'text-brand-text-secondary hover:bg-brand-bg'}`}>
+            <a href={item.href} class={`block px-4 py-3 rounded-lg text-sm font-medium transition min-h-12 flex items-center ${pathname === item.href ? 'bg-brand-primary text-white' : 'text-brand-text-secondary hover:bg-brand-bg'}`}>
               {item.label}
             </a>
           ))}
@@ -46,11 +49,15 @@ const menu = [
         </div>
       </aside>
       <main class="flex-1 min-w-0">
-        <div class="h-16 bg-brand-surface border-b border-brand-border flex items-center justify-between px-6">
+        <div class="h-16 bg-brand-surface border-b border-brand-border flex items-center justify-between px-4 md:px-6">
           <h1 class="font-bold text-lg">{title}</h1>
-          <div class="w-9 h-9 rounded-full bg-brand-primary/10 text-brand-primary flex items-center justify-center font-bold text-sm">OP</div>
+          {user ? (
+            <UserMenu client:only="react" name={user.name} email={user.email} />
+          ) : (
+            <div class="w-9 h-9 rounded-full bg-brand-primary/10 text-brand-primary flex items-center justify-center font-bold text-sm">OP</div>
+          )}
         </div>
-        <div class="p-6">
+        <div class="p-4 md:p-6">
           <slot />
         </div>
       </main>

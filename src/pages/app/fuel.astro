@@ -1,10 +1,16 @@
 ---
 import App from '../../layouts/App.astro';
-import { fuelLogsData, vehiclesData } from '../../data/seed';
+import { getDb } from '../../db/client';
+import { getFuelLogs, getVehicles } from '../../db/queries';
 
-const vehiclesById = Object.fromEntries(vehiclesData.map(v => [v.id, v]));
-const totalLiters = fuelLogsData.reduce((acc, f) => acc + f.liters, 0);
-const totalCost = fuelLogsData.reduce((acc, f) => acc + f.cost, 0);
+export const prerender = false;
+
+const db = getDb(Astro.locals.runtime.env.DB);
+const fuelLogs = await getFuelLogs(db);
+const vehicles = await getVehicles(db);
+const vehiclesById = Object.fromEntries(vehicles.map((v) => [v.id, v]));
+const totalLiters = fuelLogs.reduce((acc, f) => acc + f.liters, 0);
+const totalCost = fuelLogs.reduce((acc, f) => acc + f.cost, 0);
 ---
 
 <App title="Combustivel">
@@ -19,12 +25,12 @@ const totalCost = fuelLogsData.reduce((acc, f) => acc + f.cost, 0);
       <p class="text-2xl font-extrabold text-brand-text mt-1">R$ {totalCost.toFixed(2)}</p>
     </div>
     <div class="bg-brand-surface rounded-xl p-5 border border-brand-border">
-      <p class="text-sm text-brand-text-secondary">Preço medio/litro</p>
-      <p class="text-2xl font-extrabold text-brand-text mt-1">R$ {(totalCost / totalLiters).toFixed(2)}</p>
+      <p class="text-sm text-brand-text-secondary">Preco medio/litro</p>
+      <p class="text-2xl font-extrabold text-brand-text mt-1">R$ {totalLiters > 0 ? (totalCost / totalLiters).toFixed(2) : '0,00'}</p>
     </div>
     <div class="bg-brand-surface rounded-xl p-5 border border-brand-border">
       <p class="text-sm text-brand-text-secondary">Registros</p>
-      <p class="text-2xl font-extrabold text-brand-text mt-1">{fuelLogsData.length}</p>
+      <p class="text-2xl font-extrabold text-brand-text mt-1">{fuelLogs.length}</p>
     </div>
   </div>
   <div class="bg-brand-surface rounded-xl border border-brand-border overflow-x-auto">
@@ -40,7 +46,7 @@ const totalCost = fuelLogsData.reduce((acc, f) => acc + f.cost, 0);
         </tr>
       </thead>
       <tbody>
-        {fuelLogsData.map(f => (
+        {fuelLogs.map((f) => (
           <tr class="border-b border-brand-border last:border-0">
             <td class="px-6 py-3 text-brand-text-secondary">{new Date(f.date).toLocaleString('pt-BR')}</td>
             <td class="px-6 py-3 font-medium text-brand-text">{vehiclesById[f.vehicleId]?.plate}</td>

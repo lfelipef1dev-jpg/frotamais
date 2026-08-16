@@ -11,11 +11,15 @@ export default defineConfig({
     platformProxy: {
       enabled: true,
     },
+    workerEntryPoint: {
+      path: 'src/worker.ts',
+      namedExports: ['FleetTracker'],
+    },
   }),
   integrations: [tailwind(), react()],
   vite: {
     ssr: {
-      noExternal: ['lucide-react'],
+      noExternal: ['lucide-react', 'better-auth'],
     },
   },
 });

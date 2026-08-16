@@ -1,0 +1,16 @@
+feat: evolui de mock para MVP funcional com D1, auth, VRP, SSE e Leaflet
+
+- Cloudflare D1 real com Drizzle ORM e migrations aplicadas em producao
+- Better Auth com sessao via KV e middleware protegendo rotas /app/*
+- Durable Object FleetTracker com SSE para rastreamento em tempo real
+- Algoritmo VRP (Nearest Neighbor + 2-opt) com distancia haversine
+- Leaflet no dashboard com posicoes atualizando via SSE
+- Score de seguranca calculado em tempo real de eventos de telemetria
+- Paginas de sign-in e sign-up com componentes React
+- API Hono lendo do D1 em vez de seed em memoria
+- Custom worker entry point exportando FleetTracker
+- Deploy workflow com migrations D1 e secrets automatizados
+
+Generated with [Devin](https://devin.ai)
+
+Co-Authored-By: Devin <158243242+devin-ai-integration[bot]@users.noreply.github.com>

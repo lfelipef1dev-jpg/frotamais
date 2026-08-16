@@ -1,14 +1,20 @@
 ---
 import App from '../../layouts/App.astro';
-import { alertsData, vehiclesData } from '../../data/seed';
+import { getDb } from '../../db/client';
+import { getAlerts, getVehicles } from '../../db/queries';
 
-const vehiclesById = Object.fromEntries(vehiclesData.map(v => [v.id, v]));
+export const prerender = false;
+
+const db = getDb(Astro.locals.runtime.env.DB);
+const alerts = await getAlerts(db);
+const vehicles = await getVehicles(db);
+const vehiclesById = Object.fromEntries(vehicles.map((v) => [v.id, v]));
 ---
 
 <App title="Alertas">
   <h2 class="text-xl font-bold text-brand-text mb-6">Central de alertas</h2>
   <div class="space-y-3">
-    {alertsData.map(a => (
+    {alerts.map((a) => (
       <div class="bg-brand-surface rounded-xl p-4 border border-brand-border flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div class="flex items-start gap-3">
           <span class={`w-3 h-3 mt-1 rounded-full flex-shrink-0 ${a.severity === 'critical' ? 'bg-red-500' : a.severity === 'high' ? 'bg-brand-warning' : 'bg-yellow-500'}`} aria-hidden="true" />

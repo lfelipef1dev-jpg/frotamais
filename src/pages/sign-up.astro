@@ -1,0 +1,33 @@
+---
+import Layout from '../layouts/Layout.astro';
+import SignUpForm from '../components/auth/SignUpForm';
+---
+
+<Layout title="Criar conta - Frotamais">
+  <main id="conteudo" class="min-h-screen flex items-center justify-center px-4 py-12">
+    <div class="w-full max-w-md">
+      <div class="text-center mb-8">
+        <a href="/" class="inline-block text-2xl font-bold text-brand-text">Frotamais</a>
+        <h1 class="mt-4 text-2xl font-bold text-brand-text">Criar conta de demonstracao</h1>
+        <p class="mt-2 text-sm text-brand-text-secondary">
+          Cadastro para acessar o painel de gestao de frotas.
+        </p>
+      </div>
+
+      <div class="bg-brand-surface border border-brand-border rounded-xl p-6 md:p-8">
+        <SignUpForm client:only="react" />
+      </div>
+
+      <p class="mt-6 text-center text-sm text-brand-text-secondary">
+        Ja tem conta?{' '}
+        <a href="/sign-in" class="text-brand-accent hover:text-brand-accent-hover font-medium">
+          Entrar
+        </a>
+      </p>
+
+      <p class="mt-8 text-center text-xs text-brand-text-secondary max-w-sm mx-auto">
+        Demonstracao de portofolio. Dados simulados em memoria e D1. Nenhum documento fiscal real e emitido.
+      </p>
+    </div>
+  </main>
+</Layout>
