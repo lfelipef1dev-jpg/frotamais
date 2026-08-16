@@ -1,0 +1,70 @@
+---
+import App from '../../layouts/App.astro';
+import { getDb } from '../../db/client';
+import { getInspections, getVehicles, getDrivers } from '../../db/queries';
+
+export const prerender = false;
+
+const db = getDb(Astro.locals.runtime.env.DB);
+const inspections = await getInspections(db);
+const vehicles = await getVehicles(db);
+const drivers = await getDrivers(db);
+const vehiclesById = Object.fromEntries(vehicles.map((v) => [v.id, v]));
+const driversById = Object.fromEntries(drivers.map((d) => [d.id, d]));
+---
+
+<App title="Inspecoes">
+  <h2 class="text-xl font-bold text-brand-text mb-2">Inspecoes de veiculos (DVIR)</h2>
+  <p class="text-sm text-brand-text-secondary mb-6">Checklists pre e pos viagem com registro de defeitos.</p>
+
+  <div class="grid sm:grid-cols-3 gap-4 mb-6">
+    <div class="bg-brand-surface rounded-xl p-5 border border-brand-border">
+      <p class="text-sm text-brand-text-secondary">Total de inspecoes</p>
+      <p class="text-2xl font-extrabold text-brand-text mt-1">{inspections.length}</p>
+    </div>
+    <div class="bg-brand-surface rounded-xl p-5 border border-brand-border">
+      <p class="text-sm text-brand-text-secondary">Aprovadas</p>
+      <p class="text-2xl font-extrabold text-green-500 mt-1">{inspections.filter((i) => i.status === 'approved').length}</p>
+    </div>
+    <div class="bg-brand-surface rounded-xl p-5 border border-brand-border">
+      <p class="text-sm text-brand-text-secondary">Com defeitos</p>
+      <p class="text-2xl font-extrabold text-orange-500 mt-1">{inspections.filter((i) => i.status === 'failed').length}</p>
+    </div>
+  </div>
+
+  <div class="bg-brand-surface rounded-xl border border-brand-border overflow-x-auto">
+    <table class="min-w-full text-sm">
+      <thead>
+        <tr class="text-left text-brand-text-secondary border-b border-brand-border bg-brand-bg">
+          <th class="px-6 py-3 font-medium">Data</th>
+          <th class="px-6 py-3 font-medium">Veiculo</th>
+          <th class="px-6 py-3 font-medium">Motorista</th>
+          <th class="px-6 py-3 font-medium">Tipo</th>
+          <th class="px-6 py-3 font-medium">Status</th>
+          <th class="px-6 py-3 font-medium">Defeitos</th>
+        </tr>
+      </thead>
+      <tbody>
+        {inspections.map((i) => (
+          <tr class="border-b border-brand-border last:border-0">
+            <td class="px-6 py-3 text-brand-text-secondary">{new Date(i.performedAt).toLocaleDateString('pt-BR')}</td>
+            <td class="px-6 py-3 font-medium text-brand-text">{vehiclesById[i.vehicleId]?.plate ?? '-'}</td>
+            <td class="px-6 py-3 text-brand-text-secondary">{driversById[i.driverId]?.name ?? '-'}</td>
+            <td class="px-6 py-3 text-brand-text-secondary">{i.type === 'pre' ? 'Pre-viagem' : 'Pos-viagem'}</td>
+            <td class="px-6 py-3">
+              <span class={`inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold ${i.status === 'approved' ? 'bg-green-100 text-green-700' : i.status === 'failed' ? 'bg-red-100 text-red-700' : 'bg-yellow-100 text-yellow-700'}`}>
+                {i.status === 'approved' ? 'Aprovada' : i.status === 'failed' ? 'Reprovada' : 'Pendente'}
+              </span>
+            </td>
+            <td class="px-6 py-3 text-brand-text-secondary">{i.defects ?? '-'}</td>
+          </tr>
+        ))}
+        {inspections.length === 0 && (
+          <tr>
+            <td colspan="6" class="px-6 py-8 text-center text-brand-text-secondary">Nenhuma inspecao registrada.</td>
+          </tr>
+        )}
+      </tbody>
+    </table>
+  </div>
+</App>

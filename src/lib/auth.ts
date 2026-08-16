@@ -24,6 +24,16 @@ export function createAuth(env: Env) {
       requireEmailVerification: false,
       autoSignIn: true,
     },
+    user: {
+      additionalFields: {
+        role: {
+          type: 'string',
+          required: false,
+          defaultValue: 'admin',
+          input: true,
+        },
+      },
+    },
     advanced: {
       useSecureCookies: isProduction,
       defaultCookieAttributes: {

@@ -1,0 +1,217 @@
+---
+import App from '../../../layouts/App.astro';
+import { getDb } from '../../../db/client';
+import { getVehicle, getDrivers, getTripsForVehicle, getMaintenanceForVehicle, getFuelLogsForVehicle, getAlertsForVehicle, getInspectionsForVehicle } from '../../../db/queries';
+import FleetMap from '../../../components/dashboard/FleetMap';
+
+export const prerender = false;
+
+export async function getStaticPaths() {
+  return [];
+}
+
+const { id } = Astro.params;
+const db = getDb(Astro.locals.runtime.env.DB);
+
+const vehicle = id ? await getVehicle(db, id) : null;
+if (!vehicle) {
+  return Astro.redirect('/app/vehicles');
+}
+
+const drivers = await getDrivers(db);
+const driversById = Object.fromEntries(drivers.map((d) => [d.id, d]));
+const assignedDriver = vehicle.assignedDriverId ? driversById[vehicle.assignedDriverId] : null;
+
+const trips = await getTripsForVehicle(db, vehicle.id);
+const maintenance = await getMaintenanceForVehicle(db, vehicle.id);
+const fuelLogs = await getFuelLogsForVehicle(db, vehicle.id);
+const alerts = await getAlertsForVehicle(db, vehicle.id);
+const inspections = await getInspectionsForVehicle(db, vehicle.id);
+
+const totalFuelCost = fuelLogs.reduce((sum, f) => sum + f.cost, 0);
+const totalFuelLiters = fuelLogs.reduce((sum, f) => sum + f.liters, 0);
+const totalMaintenanceCost = maintenance.reduce((sum, m) => sum + (m.cost ?? 0), 0);
+
+const statusLabels: Record<string, string> = {
+  in_use: 'Em rota',
+  maintenance: 'Manutencao',
+  unavailable: 'Indisponivel',
+  available: 'Disponivel',
+};
+const statusColors: Record<string, string> = {
+  in_use: 'bg-green-100 text-green-700',
+  maintenance: 'bg-orange-100 text-orange-700',
+  unavailable: 'bg-red-100 text-red-700',
+  available: 'bg-slate-100 text-slate-700',
+};
+---
+
+<App title={`Veiculo ${vehicle.plate}`}>
+  <div class="mb-6">
+    <a href="/app/vehicles" class="text-sm text-brand-text-secondary hover:text-brand-text">&larr; Voltar para frota</a>
+  </div>
+
+  <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+    <div>
+      <h2 class="text-2xl font-extrabold text-brand-text">{vehicle.make} {vehicle.model}</h2>
+      <p class="text-brand-text-secondary mt-1">{vehicle.plate} &bull; {vehicle.year} &bull; {vehicle.type}</p>
+    </div>
+    <span class={`inline-flex items-center px-3 py-1.5 rounded-full text-sm font-semibold ${statusColors[vehicle.status] ?? 'bg-slate-100 text-slate-700'}`}>
+      {statusLabels[vehicle.status] ?? vehicle.status}
+    </span>
+  </div>
+
+  <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+    <div class="bg-brand-surface rounded-xl p-5 border border-brand-border">
+      <p class="text-sm text-brand-text-secondary">Odometro</p>
+      <p class="text-2xl font-extrabold text-brand-text mt-1">{vehicle.currentOdometer.toLocaleString('pt-BR')} km</p>
+    </div>
+    <div class="bg-brand-surface rounded-xl p-5 border border-brand-border">
+      <p class="text-sm text-brand-text-secondary">Combustivel</p>
+      <p class="text-2xl font-extrabold text-brand-text mt-1">{vehicle.fuelLevel}%</p>
+    </div>
+    <div class="bg-brand-surface rounded-xl p-5 border border-brand-border">
+      <p class="text-sm text-brand-text-secondary">Motorista</p>
+      <p class="text-lg font-bold text-brand-text mt-1">{assignedDriver ? assignedDriver.name : 'Sem atribuicao'}</p>
+    </div>
+    <div class="bg-brand-surface rounded-xl p-5 border border-brand-border">
+      <p class="text-sm text-brand-text-secondary">Tipo de combustivel</p>
+      <p class="text-lg font-bold text-brand-text mt-1 capitalize">{vehicle.fuelType}</p>
+    </div>
+  </div>
+
+  {vehicle.currentLat && vehicle.currentLng && (
+    <div class="bg-brand-surface rounded-xl border border-brand-border p-4 mb-8">
+      <h3 class="font-bold text-brand-text mb-3">Posicao atual</h3>
+      <FleetMap client:only="react" vehicles={[{ id: vehicle.id, plate: vehicle.plate, status: vehicle.status, lat: vehicle.currentLat, lng: vehicle.currentLng, driver: assignedDriver?.name }]} />
+    </div>
+  )}
+
+  <div class="grid lg:grid-cols-2 gap-6 mb-8">
+    <div class="bg-brand-surface rounded-xl border border-brand-border p-5">
+      <h3 class="font-bold text-brand-text mb-4">Resumo financeiro</h3>
+      <div class="space-y-3">
+        <div class="flex justify-between">
+          <span class="text-sm text-brand-text-secondary">Combustivel ({totalFuelLiters.toFixed(0)} L)</span>
+          <span class="font-semibold text-brand-text">R$ {totalFuelCost.toFixed(2)}</span>
+        </div>
+        <div class="flex justify-between">
+          <span class="text-sm text-brand-text-secondary">Manutencao ({maintenance.length} registros)</span>
+          <span class="font-semibold text-brand-text">R$ {totalMaintenanceCost.toFixed(2)}</span>
+        </div>
+        <div class="flex justify-between border-t border-brand-border pt-3">
+          <span class="text-sm font-bold text-brand-text">Custo total</span>
+          <span class="font-extrabold text-brand-accent">R$ {(totalFuelCost + totalMaintenanceCost).toFixed(2)}</span>
+        </div>
+        <div class="flex justify-between">
+          <span class="text-sm text-brand-text-secondary">Custo por km</span>
+          <span class="font-semibold text-brand-text">R$ {vehicle.currentOdometer > 0 ? ((totalFuelCost + totalMaintenanceCost) / vehicle.currentOdometer).toFixed(2) : '0,00'}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-brand-surface rounded-xl border border-brand-border p-5">
+      <h3 class="font-bold text-brand-text mb-4">Alertas ativos</h3>
+      <div class="space-y-2">
+        {alerts.filter((a) => !a.resolvedAt).map((a) => (
+          <div class="flex items-center gap-3">
+            <span class={`w-2.5 h-2.5 rounded-full ${a.severity === 'critical' ? 'bg-red-500' : a.severity === 'high' ? 'bg-orange-500' : 'bg-yellow-500'}`} aria-hidden="true" />
+            <span class="text-sm text-brand-text">{a.details}</span>
+          </div>
+        ))}
+        {alerts.filter((a) => !a.resolvedAt).length === 0 && (
+          <p class="text-sm text-brand-text-secondary">Nenhum alerta ativo.</p>
+        )}
+      </div>
+    </div>
+  </div>
+
+  <div class="bg-brand-surface rounded-xl border border-brand-border overflow-x-auto mb-8">
+    <h3 class="font-bold text-brand-text px-6 py-4 border-b border-brand-border">Viagens ({trips.length})</h3>
+    <table class="min-w-full text-sm">
+      <thead>
+        <tr class="text-left text-brand-text-secondary border-b border-brand-border bg-brand-bg">
+          <th class="px-6 py-3 font-medium">Rota</th>
+          <th class="px-6 py-3 font-medium">Motorista</th>
+          <th class="px-6 py-3 font-medium">Distancia</th>
+          <th class="px-6 py-3 font-medium">Status</th>
+          <th class="px-6 py-3 font-medium">Data</th>
+        </tr>
+      </thead>
+      <tbody>
+        {trips.map((t) => (
+          <tr class="border-b border-brand-border last:border-0">
+            <td class="px-6 py-3 text-brand-text-secondary">{t.startAddress ?? '-'} &rarr; {t.endAddress ?? '-'}</td>
+            <td class="px-6 py-3 text-brand-text-secondary">{driversById[t.driverId]?.name ?? '-'}</td>
+            <td class="px-6 py-3 text-brand-text-secondary">{t.distanceKm ? `${t.distanceKm} km` : '-'}</td>
+            <td class="px-6 py-3">
+              <span class={`inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold ${t.status === 'completed' ? 'bg-green-100 text-green-700' : t.status === 'in_progress' ? 'bg-blue-100 text-blue-700' : 'bg-slate-100 text-slate-700'}`}>
+                {t.status === 'completed' ? 'Concluida' : t.status === 'in_progress' ? 'Em andamento' : t.status}
+              </span>
+            </td>
+            <td class="px-6 py-3 text-brand-text-secondary">{t.startedAt ? new Date(t.startedAt).toLocaleDateString('pt-BR') : '-'}</td>
+          </tr>
+        ))}
+        {trips.length === 0 && (
+          <tr><td colspan="5" class="px-6 py-6 text-center text-brand-text-secondary">Nenhuma viagem registrada.</td></tr>
+        )}
+      </tbody>
+    </table>
+  </div>
+
+  <div class="grid lg:grid-cols-2 gap-6">
+    <div class="bg-brand-surface rounded-xl border border-brand-border overflow-x-auto">
+      <h3 class="font-bold text-brand-text px-6 py-4 border-b border-brand-border">Manutencao ({maintenance.length})</h3>
+      <table class="min-w-full text-sm">
+        <thead>
+          <tr class="text-left text-brand-text-secondary border-b border-brand-border bg-brand-bg">
+            <th class="px-6 py-3 font-medium">Servico</th>
+            <th class="px-6 py-3 font-medium">Custo</th>
+            <th class="px-6 py-3 font-medium">Data</th>
+          </tr>
+        </thead>
+        <tbody>
+          {maintenance.map((m) => (
+            <tr class="border-b border-brand-border last:border-0">
+              <td class="px-6 py-3 text-brand-text">{m.description ?? m.type}</td>
+              <td class="px-6 py-3 text-brand-text-secondary">R$ {m.cost?.toFixed(2) ?? '-'}</td>
+              <td class="px-6 py-3 text-brand-text-secondary">{new Date(m.performedAt).toLocaleDateString('pt-BR')}</td>
+            </tr>
+          ))}
+          {maintenance.length === 0 && (
+            <tr><td colspan="3" class="px-6 py-6 text-center text-brand-text-secondary">Sem registros.</td></tr>
+          )}
+        </tbody>
+      </table>
+    </div>
+
+    <div class="bg-brand-surface rounded-xl border border-brand-border overflow-x-auto">
+      <h3 class="font-bold text-brand-text px-6 py-4 border-b border-brand-border">Inspecoes ({inspections.length})</h3>
+      <table class="min-w-full text-sm">
+        <thead>
+          <tr class="text-left text-brand-text-secondary border-b border-brand-border bg-brand-bg">
+            <th class="px-6 py-3 font-medium">Tipo</th>
+            <th class="px-6 py-3 font-medium">Status</th>
+            <th class="px-6 py-3 font-medium">Defeitos</th>
+          </tr>
+        </thead>
+        <tbody>
+          {inspections.map((i) => (
+            <tr class="border-b border-brand-border last:border-0">
+              <td class="px-6 py-3 text-brand-text-secondary">{i.type === 'pre' ? 'Pre-viagem' : 'Pos-viagem'}</td>
+              <td class="px-6 py-3">
+                <span class={`inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold ${i.status === 'approved' ? 'bg-green-100 text-green-700' : i.status === 'failed' ? 'bg-red-100 text-red-700' : 'bg-yellow-100 text-yellow-700'}`}>
+                  {i.status === 'approved' ? 'Aprovada' : i.status === 'failed' ? 'Reprovada' : 'Pendente'}
+                </span>
+              </td>
+              <td class="px-6 py-3 text-brand-text-secondary">{i.defects ?? 'Sem defeitos'}</td>
+            </tr>
+          ))}
+          {inspections.length === 0 && (
+            <tr><td colspan="3" class="px-6 py-6 text-center text-brand-text-secondary">Sem inspecoes.</td></tr>
+          )}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</App>

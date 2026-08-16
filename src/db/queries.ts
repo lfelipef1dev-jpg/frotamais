@@ -78,3 +78,41 @@ export async function getFleetSummary(db: Database) {
     activeTrips: allTrips.filter((t) => t.status === 'in_progress'),
   };
 }
+
+export async function getUsers(db: Database) {
+  return db.select({
+    id: schema.user.id,
+    name: schema.user.name,
+    email: schema.user.email,
+    role: schema.user.role,
+    createdAt: schema.user.createdAt,
+  }).from(schema.user).all();
+}
+
+export async function getInspections(db: Database) {
+  return db.select().from(schema.inspections).all();
+}
+
+export async function getInspectionsForVehicle(db: Database, vehicleId: string) {
+  return db.select().from(schema.inspections).where(eq(schema.inspections.vehicleId, vehicleId)).all();
+}
+
+export async function getTripsForVehicle(db: Database, vehicleId: string) {
+  return db.select().from(schema.trips).where(eq(schema.trips.vehicleId, vehicleId)).all();
+}
+
+export async function getMaintenanceForVehicle(db: Database, vehicleId: string) {
+  return db.select().from(schema.maintenance).where(eq(schema.maintenance.vehicleId, vehicleId)).all();
+}
+
+export async function getFuelLogsForVehicle(db: Database, vehicleId: string) {
+  return db.select().from(schema.fuelLogs).where(eq(schema.fuelLogs.vehicleId, vehicleId)).all();
+}
+
+export async function getTripsForDriver(db: Database, driverId: string) {
+  return db.select().from(schema.trips).where(eq(schema.trips.driverId, driverId)).all();
+}
+
+export async function getAlertsForVehicle(db: Database, vehicleId: string) {
+  return db.select().from(schema.alerts).where(eq(schema.alerts.vehicleId, vehicleId)).all();
+}

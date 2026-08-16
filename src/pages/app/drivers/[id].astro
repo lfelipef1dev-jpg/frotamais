@@ -1,0 +1,192 @@
+---
+import App from '../../../layouts/App.astro';
+import { getDb } from '../../../db/client';
+import { getDriver, getTripsForDriver, getSafetyEventsForDriver, getVehicles } from '../../../db/queries';
+import { calculateSafetyScore, getSafetyScoreBreakdown, getScoreLabel, getScoreColor } from '../../../lib/safety-score';
+
+export const prerender = false;
+
+export async function getStaticPaths() {
+  return [];
+}
+
+const { id } = Astro.params;
+const db = getDb(Astro.locals.runtime.env.DB);
+
+const driver = id ? await getDriver(db, id) : null;
+if (!driver) {
+  return Astro.redirect('/app/drivers');
+}
+
+const events = await getSafetyEventsForDriver(db, driver.id);
+const trips = await getTripsForDriver(db, driver.id);
+const vehicles = await getVehicles(db);
+const vehiclesById = Object.fromEntries(vehicles.map((v) => [v.id, v]));
+
+const calculatedScore = calculateSafetyScore(events);
+const scoreBreakdown = getSafetyScoreBreakdown(events);
+const scoreLabel = getScoreLabel(calculatedScore);
+const scoreColor = getScoreColor(calculatedScore);
+
+const totalDistance = trips.reduce((sum, t) => sum + (t.distanceKm ?? 0), 0);
+const completedTrips = trips.filter((t) => t.status === 'completed').length;
+---
+
+<App title={`Motorista ${driver.name}`}>
+  <div class="mb-6">
+    <a href="/app/drivers" class="text-sm text-brand-text-secondary hover:text-brand-text">&larr; Voltar para motoristas</a>
+  </div>
+
+  <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+    <div class="flex items-center gap-4">
+      <div class="w-16 h-16 rounded-full bg-brand-primary/10 text-brand-primary flex items-center justify-center font-bold text-xl">
+        {driver.name.split(' ').map((n) => n[0]).slice(0, 2).join('')}
+      </div>
+      <div>
+        <h2 class="text-2xl font-extrabold text-brand-text">{driver.name}</h2>
+        <p class="text-brand-text-secondary mt-1">{driver.phone} &bull; CNH {driver.licenseNumber}</p>
+      </div>
+    </div>
+    <span class={`inline-flex items-center px-3 py-1.5 rounded-full text-sm font-semibold ${driver.status === 'active' ? 'bg-green-100 text-green-700' : 'bg-slate-100 text-slate-700'}`}>
+      {driver.status === 'active' ? 'Ativo' : 'Inativo'}
+    </span>
+  </div>
+
+  <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+    <div class="bg-brand-surface rounded-xl p-5 border border-brand-border">
+      <p class="text-sm text-brand-text-secondary">Score calculado</p>
+      <p class={`text-3xl font-extrabold mt-1 ${scoreColor}`}>{calculatedScore}/100</p>
+      <p class="text-xs text-brand-text-secondary mt-1">{scoreLabel}</p>
+    </div>
+    <div class="bg-brand-surface rounded-xl p-5 border border-brand-border">
+      <p class="text-sm text-brand-text-secondary">Score base</p>
+      <p class="text-2xl font-extrabold text-brand-text mt-1">{driver.safetyScore}/100</p>
+    </div>
+    <div class="bg-brand-surface rounded-xl p-5 border border-brand-border">
+      <p class="text-sm text-brand-text-secondary">Viagens</p>
+      <p class="text-2xl font-extrabold text-brand-text mt-1">{completedTrips} <span class="text-sm font-normal text-brand-text-secondary">concluidas</span></p>
+    </div>
+    <div class="bg-brand-surface rounded-xl p-5 border border-brand-border">
+      <p class="text-sm text-brand-text-secondary">Distancia total</p>
+      <p class="text-2xl font-extrabold text-brand-text mt-1">{totalDistance.toLocaleString('pt-BR')} <span class="text-sm font-normal text-brand-text-secondary">km</span></p>
+    </div>
+  </div>
+
+  <div class="grid lg:grid-cols-2 gap-6 mb-8">
+    <div class="bg-brand-surface rounded-xl border border-brand-border p-5">
+      <h3 class="font-bold text-brand-text mb-4">Detalhamento do score de seguranca</h3>
+      <p class="text-xs text-brand-text-secondary mb-4">Calculado em tempo real a partir de {events.length} eventos de telemetria.</p>
+      <div class="space-y-3">
+        {scoreBreakdown.map((b) => (
+          <div>
+            <div class="flex justify-between text-sm mb-1">
+              <span class="text-brand-text">{b.label}</span>
+              <span class="text-brand-text-secondary">{b.count} evento(s) &bull; -{b.penalty} pts</span>
+            </div>
+            <div class="h-2 bg-brand-bg rounded-full overflow-hidden">
+              <div class={`h-full ${b.penalty > 15 ? 'bg-red-500' : b.penalty > 5 ? 'bg-orange-500' : 'bg-yellow-500'}`} style={`width: ${Math.min(100, b.penalty * 3)}%`} />
+            </div>
+          </div>
+        ))}
+        {scoreBreakdown.length === 0 && (
+          <p class="text-sm text-brand-text-secondary">Nenhum evento registrado. Score maximo.</p>
+        )}
+      </div>
+    </div>
+
+    <div class="bg-brand-surface rounded-xl border border-brand-border p-5">
+      <h3 class="font-bold text-brand-text mb-4">Documentacao</h3>
+      <div class="space-y-3 text-sm">
+        <div class="flex justify-between">
+          <span class="text-brand-text-secondary">CNH</span>
+          <span class="text-brand-text font-medium">{driver.licenseNumber}</span>
+        </div>
+        <div class="flex justify-between">
+          <span class="text-brand-text-secondary">Validade CNH</span>
+          <span class={`font-medium ${new Date(driver.licenseExpiry) < new Date(Date.now() + 90 * 24 * 60 * 60 * 1000) ? 'text-orange-400' : 'text-brand-text'}`}>
+            {new Date(driver.licenseExpiry).toLocaleDateString('pt-BR')}
+            {new Date(driver.licenseExpiry) < new Date(Date.now() + 90 * 24 * 60 * 60 * 1000) && ' (vence em breve)'}
+          </span>
+        </div>
+        <div class="flex justify-between">
+          <span class="text-brand-text-secondary">Veiculo atual</span>
+          <span class="text-brand-text font-medium">{driver.currentVehicleId ? vehiclesById[driver.currentVehicleId]?.plate ?? '-' : 'Sem atribuicao'}</span>
+        </div>
+        <div class="flex justify-between">
+          <span class="text-brand-text-secondary">Total de viagens</span>
+          <span class="text-brand-text font-medium">{driver.totalTrips}</span>
+        </div>
+        <div class="flex justify-between">
+          <span class="text-brand-text-secondary">Km percorridos</span>
+          <span class="text-brand-text font-medium">{driver.totalKm.toLocaleString('pt-BR')} km</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="bg-brand-surface rounded-xl border border-brand-border overflow-x-auto mb-8">
+    <h3 class="font-bold text-brand-text px-6 py-4 border-b border-brand-border">Eventos de telemetria ({events.length})</h3>
+    <table class="min-w-full text-sm">
+      <thead>
+        <tr class="text-left text-brand-text-secondary border-b border-brand-border bg-brand-bg">
+          <th class="px-6 py-3 font-medium">Tipo</th>
+          <th class="px-6 py-3 font-medium">Severidade</th>
+          <th class="px-6 py-3 font-medium">Velocidade</th>
+          <th class="px-6 py-3 font-medium">Veiculo</th>
+          <th class="px-6 py-3 font-medium">Data</th>
+        </tr>
+      </thead>
+      <tbody>
+        {events.map((e) => (
+          <tr class="border-b border-brand-border last:border-0">
+            <td class="px-6 py-3 text-brand-text">{e.type}</td>
+            <td class="px-6 py-3">
+              <span class={`inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold ${e.severity === 'critical' ? 'bg-red-100 text-red-700' : e.severity === 'high' ? 'bg-orange-100 text-orange-700' : e.severity === 'medium' ? 'bg-yellow-100 text-yellow-700' : 'bg-slate-100 text-slate-700'}`}>
+                {e.severity}
+              </span>
+            </td>
+            <td class="px-6 py-3 text-brand-text-secondary">{e.speed ? `${e.speed} km/h` : '-'}{e.speedLimit ? ` (limite ${e.speedLimit})` : ''}</td>
+            <td class="px-6 py-3 text-brand-text-secondary">{e.vehicleId ? vehiclesById[e.vehicleId]?.plate ?? '-' : '-'}</td>
+            <td class="px-6 py-3 text-brand-text-secondary">{new Date(e.occurredAt).toLocaleString('pt-BR')}</td>
+          </tr>
+        ))}
+        {events.length === 0 && (
+          <tr><td colspan="5" class="px-6 py-6 text-center text-brand-text-secondary">Nenhum evento registrado.</td></tr>
+        )}
+      </tbody>
+    </table>
+  </div>
+
+  <div class="bg-brand-surface rounded-xl border border-brand-border overflow-x-auto">
+    <h3 class="font-bold text-brand-text px-6 py-4 border-b border-brand-border">Historico de viagens ({trips.length})</h3>
+    <table class="min-w-full text-sm">
+      <thead>
+        <tr class="text-left text-brand-text-secondary border-b border-brand-border bg-brand-bg">
+          <th class="px-6 py-3 font-medium">Rota</th>
+          <th class="px-6 py-3 font-medium">Veiculo</th>
+          <th class="px-6 py-3 font-medium">Distancia</th>
+          <th class="px-6 py-3 font-medium">Status</th>
+          <th class="px-6 py-3 font-medium">Data</th>
+        </tr>
+      </thead>
+      <tbody>
+        {trips.map((t) => (
+          <tr class="border-b border-brand-border last:border-0">
+            <td class="px-6 py-3 text-brand-text-secondary">{t.startAddress ?? '-'} &rarr; {t.endAddress ?? '-'}</td>
+            <td class="px-6 py-3 text-brand-text-secondary">{vehiclesById[t.vehicleId]?.plate ?? '-'}</td>
+            <td class="px-6 py-3 text-brand-text-secondary">{t.distanceKm ? `${t.distanceKm} km` : '-'}</td>
+            <td class="px-6 py-3">
+              <span class={`inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold ${t.status === 'completed' ? 'bg-green-100 text-green-700' : t.status === 'in_progress' ? 'bg-blue-100 text-blue-700' : 'bg-slate-100 text-slate-700'}`}>
+                {t.status === 'completed' ? 'Concluida' : t.status === 'in_progress' ? 'Em andamento' : t.status}
+              </span>
+            </td>
+            <td class="px-6 py-3 text-brand-text-secondary">{t.startedAt ? new Date(t.startedAt).toLocaleDateString('pt-BR') : '-'}</td>
+          </tr>
+        ))}
+        {trips.length === 0 && (
+          <tr><td colspan="5" class="px-6 py-6 text-center text-brand-text-secondary">Nenhuma viagem registrada.</td></tr>
+        )}
+      </tbody>
+    </table>
+  </div>
+</App>

@@ -1,0 +1,148 @@
+---
+import App from '../../layouts/App.astro';
+import { getDb } from '../../db/client';
+import { getVehicles, getDrivers, getFuelLogs, getMaintenance, getTrips, getSafetyEvents, getAlerts, getInspections } from '../../db/queries';
+import { calculateSafetyScore } from '../../lib/safety-score';
+import BarChart from '../../components/dashboard/BarChart';
+import DonutChart from '../../components/dashboard/DonutChart';
+
+export const prerender = false;
+
+const db = getDb(Astro.locals.runtime.env.DB);
+const vehicles = await getVehicles(db);
+const drivers = await getDrivers(db);
+const fuelLogs = await getFuelLogs(db);
+const maintenance = await getMaintenance(db);
+const trips = await getTrips(db);
+const events = await getSafetyEvents(db);
+const alerts = await getAlerts(db);
+const inspections = await getInspections(db);
+
+const vehiclesById = Object.fromEntries(vehicles.map((v) => [v.id, v]));
+
+// Fuel consumption by vehicle
+const fuelByVehicle = vehicles.map((v) => {
+  const logs = fuelLogs.filter((f) => f.vehicleId === v.id);
+  return {
+    label: v.plate,
+    value: Math.round(logs.reduce((sum, f) => sum + f.liters, 0)),
+    color: '#3B82F6',
+  };
+}).filter((d) => d.value > 0).sort((a, b) => b.value - a.value);
+
+// Maintenance cost by vehicle
+const maintenanceByVehicle = vehicles.map((v) => {
+  const records = maintenance.filter((m) => m.vehicleId === v.id);
+  return {
+    label: v.plate,
+    value: Math.round(records.reduce((sum, m) => sum + (m.cost ?? 0), 0)),
+    color: '#F97316',
+  };
+}).filter((d) => d.value > 0).sort((a, b) => b.value - a.value);
+
+// Safety score by driver
+const safetyByDriver = drivers.map((d) => {
+  const score = calculateSafetyScore(events.filter((e) => e.driverId === d.id));
+  return {
+    label: d.name.split(' ')[0],
+    value: score,
+    color: score >= 90 ? '#22C55E' : score >= 70 ? '#EAB308' : '#EF4444',
+  };
+}).sort((a, b) => b.value - a.value);
+
+// Fleet status distribution
+const statusData = [
+  { label: 'Disponivel', value: vehicles.filter((v) => v.status === 'available').length, color: '#22C55E' },
+  { label: 'Em rota', value: vehicles.filter((v) => v.status === 'in_use').length, color: '#3B82F6' },
+  { label: 'Manutencao', value: vehicles.filter((v) => v.status === 'maintenance').length, color: '#F97316' },
+  { label: 'Indisponivel', value: vehicles.filter((v) => v.status === 'unavailable').length, color: '#EF4444' },
+];
+
+// Alert severity distribution
+const alertData = [
+  { label: 'Critico', value: alerts.filter((a) => a.severity === 'critical').length, color: '#EF4444' },
+  { label: 'Alto', value: alerts.filter((a) => a.severity === 'high').length, color: '#F97316' },
+  { label: 'Medio', value: alerts.filter((a) => a.severity === 'medium').length, color: '#EAB308' },
+  { label: 'Baixo', value: alerts.filter((a) => a.severity === 'low').length, color: '#6B7280' },
+];
+
+// Trip status distribution
+const tripData = [
+  { label: 'Concluidas', value: trips.filter((t) => t.status === 'completed').length, color: '#22C55E' },
+  { label: 'Em andamento', value: trips.filter((t) => t.status === 'in_progress').length, color: '#3B82F6' },
+  { label: 'Agendadas', value: trips.filter((t) => t.status === 'scheduled').length, color: '#EAB308' },
+  { label: 'Canceladas', value: trips.filter((t) => t.status === 'cancelled').length, color: '#EF4444' },
+];
+
+// Inspection status
+const inspectionData = [
+  { label: 'Aprovadas', value: inspections.filter((i) => i.status === 'approved').length, color: '#22C55E' },
+  { label: 'Reprovadas', value: inspections.filter((i) => i.status === 'failed').length, color: '#EF4444' },
+  { label: 'Pendentes', value: inspections.filter((i) => i.status === 'pending').length, color: '#EAB308' },
+];
+
+const totalFuelCost = fuelLogs.reduce((sum, f) => sum + f.cost, 0);
+const totalMaintenanceCost = maintenance.reduce((sum, m) => sum + (m.cost ?? 0), 0);
+const totalKm = vehicles.reduce((sum, v) => sum + v.currentOdometer, 0);
+const avgSafetyScore = drivers.length > 0
+  ? Math.round(drivers.reduce((sum, d) => sum + calculateSafetyScore(events.filter((e) => e.driverId === d.id)), 0) / drivers.length)
+  : 0;
+---
+
+<App title="Relatorios">
+  <h2 class="text-xl font-bold text-brand-text mb-2">Relatorios e analytics</h2>
+  <p class="text-sm text-brand-text-secondary mb-6">Dados consolidados da frota em tempo real, lidos do banco D1.</p>
+
+  <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+    <div class="bg-brand-surface rounded-xl p-5 border border-brand-border">
+      <p class="text-sm text-brand-text-secondary">Custo total combustivel</p>
+      <p class="text-2xl font-extrabold text-brand-text mt-1">R$ {totalFuelCost.toFixed(2)}</p>
+    </div>
+    <div class="bg-brand-surface rounded-xl p-5 border border-brand-border">
+      <p class="text-sm text-brand-text-secondary">Custo total manutencao</p>
+      <p class="text-2xl font-extrabold text-brand-text mt-1">R$ {totalMaintenanceCost.toFixed(2)}</p>
+    </div>
+    <div class="bg-brand-surface rounded-xl p-5 border border-brand-border">
+      <p class="text-sm text-brand-text-secondary">Km total da frota</p>
+      <p class="text-2xl font-extrabold text-brand-text mt-1">{totalKm.toLocaleString('pt-BR')}</p>
+    </div>
+    <div class="bg-brand-surface rounded-xl p-5 border border-brand-border">
+      <p class="text-sm text-brand-text-secondary">Score medio frota</p>
+      <p class="text-2xl font-extrabold text-brand-text mt-1">{avgSafetyScore}/100</p>
+    </div>
+  </div>
+
+  <div class="flex flex-wrap gap-3 mb-8">
+    <a href="/api/reports/fuel-csv" class="inline-flex items-center gap-2 px-4 py-2 bg-brand-surface border border-brand-border rounded-lg text-sm font-medium text-brand-text hover:bg-brand-elevated transition min-h-12">
+      <svg class="w-4 h-4" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+      Exportar combustivel (CSV)
+    </a>
+    <a href="/api/reports/maintenance-csv" class="inline-flex items-center gap-2 px-4 py-2 bg-brand-surface border border-brand-border rounded-lg text-sm font-medium text-brand-text hover:bg-brand-elevated transition min-h-12">
+      <svg class="w-4 h-4" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+      Exportar manutencao (CSV)
+    </a>
+    <a href="/api/reports/trips-csv" class="inline-flex items-center gap-2 px-4 py-2 bg-brand-surface border border-brand-border rounded-lg text-sm font-medium text-brand-text hover:bg-brand-elevated transition min-h-12">
+      <svg class="w-4 h-4" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+      Exportar viagens (CSV)
+    </a>
+  </div>
+
+  <div class="grid lg:grid-cols-2 gap-6 mb-6">
+    <DonutChart client:only="react" data={statusData} title="Status da frota" centerValue={String(vehicles.length)} centerLabel="veiculos" />
+    <DonutChart client:only="react" data={alertData} title="Distribuicao de alertas" centerValue={String(alerts.length)} centerLabel="alertas" />
+  </div>
+
+  <div class="grid lg:grid-cols-2 gap-6 mb-6">
+    <DonutChart client:only="react" data={tripData} title="Status das viagens" centerValue={String(trips.length)} centerLabel="viagens" />
+    <DonutChart client:only="react" data={inspectionData} title="Status das inspecoes" centerValue={String(inspections.length)} centerLabel="inspecoes" />
+  </div>
+
+  <div class="grid lg:grid-cols-2 gap-6 mb-6">
+    <BarChart client:only="react" data={fuelByVehicle} title="Consumo de combustivel por veiculo (L)" unit="L" />
+    <BarChart client:only="react" data={maintenanceByVehicle} title="Custo de manutencao por veiculo (R$)" unit="R$" />
+  </div>
+
+  <div class="grid lg:grid-cols-1 gap-6">
+    <BarChart client:only="react" data={safetyByDriver} title="Score de seguranca por motorista" />
+  </div>
+</App>

@@ -1,9 +1,36 @@
-feat: botao Acessar demo na tela de login
+feat: roles, paginas de detalhe, CRUD, relatorios e inspecoes
 
-- Botao "Acessar demo" que cria conta demo e entra direto
-- Credenciais demo fixas (demo@frotamais.expostacker.com.br)
-- Tenta signUp; se usuario ja existe, faz signIn
-- Sem precisar digitar email/senha
+Frente 1 - Roles e Permissoes:
+- Campo role no schema (admin, manager, driver)
+- Sistema de permissoes por role
+- Middleware checa acesso por role
+- Sidebar condicional por permissoes
+- Pagina de Usuarios com listagem e roles
+- Layout mostra role do usuario logado
+
+Frente 2 - Paginas de Detalhe:
+- /app/vehicles/[id] com historico completo, mapa, financeiro, viagens, manutencao, inspecoes
+- /app/drivers/[id] com score detalhado, eventos de telemetria, viagens, documentacao
+- Links clicaveis nas listagens para detalhes
+
+Frente 3 - CRUD e Filtros:
+- Endpoints POST/PUT/DELETE para vehicles, drivers, maintenance, fuel-logs
+- Endpoint PUT /api/alerts/:id/resolve para resolver alertas
+- Componente AlertsManager com filtros por status e severidade
+- Botao resolver alerta com um clique
+
+Frente 4 - Relatorios e Graficos:
+- Pagina /app/reports com KPIs consolidados do D1
+- Graficos de barras (combustivel, manutencao, score por motorista)
+- Graficos donut (status frota, alertas, viagens, inspecoes)
+- Exportacao CSV para combustivel, manutencao e viagens
+- Componentes BarChart e DonutChart em SVG puro
+
+Adicional:
+- Tabela inspections (DVIR) com seed de 8 inspecoes
+- Tabela geofences com seed de 3 areas
+- Pagina /app/inspections com listagem e KPIs
+- API endpoints para inspecoes e usuarios
 
 Generated with [Devin](https://devin.ai)
 

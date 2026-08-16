@@ -29,7 +29,7 @@ const driversById = Object.fromEntries(drivers.map((d) => [d.id, d]));
       </thead>
       <tbody>
         {vehicles.map((v) => (
-          <tr class="border-b border-brand-border last:border-0">
+          <tr class="border-b border-brand-border last:border-0 hover:bg-brand-bg transition cursor-pointer" onclick={`window.location.href='/app/vehicles/${v.id}'`}>
             <td class="px-6 py-3 font-medium text-brand-text">{v.plate}</td>
             <td class="px-6 py-3 text-brand-text-secondary">{v.make} {v.model}</td>
             <td class="px-6 py-3 text-brand-text-secondary">{v.year}</td>

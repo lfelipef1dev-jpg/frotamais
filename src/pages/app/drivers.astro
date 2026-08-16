@@ -20,7 +20,7 @@ const allEvents = await getSafetyEvents(db);
     {drivers.map((d) => {
       const calculatedScore = calculateSafetyScore(allEvents.filter((e) => e.driverId === d.id));
       return (
-        <div class="bg-brand-surface rounded-xl p-5 border border-brand-border">
+        <a href={`/app/drivers/${d.id}`} class="bg-brand-surface rounded-xl p-5 border border-brand-border hover:border-brand-primary transition block">
           <div class="flex items-center gap-3 mb-3">
             <div class="w-10 h-10 rounded-full bg-brand-primary/10 text-brand-primary flex items-center justify-center font-bold">
               {d.name.split(' ').map((n) => n[0]).slice(0, 2).join('')}
@@ -36,7 +36,7 @@ const allEvents = await getSafetyEvents(db);
             <p>Viagens: {d.totalTrips} | {d.totalKm.toLocaleString('pt-BR')} km</p>
             <p>CNH valida ate: {new Date(d.licenseExpiry).toLocaleDateString('pt-BR')}</p>
           </div>
-        </div>
+        </a>
       );
     })}
   </div>

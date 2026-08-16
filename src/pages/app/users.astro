@@ -1,0 +1,66 @@
+---
+import App from '../../layouts/App.astro';
+import { getDb } from '../../db/client';
+import { getUsers } from '../../db/queries';
+import { ROLE_LABELS, ROLE_DESCRIPTIONS } from '../../lib/permissions';
+
+export const prerender = false;
+
+const db = getDb(Astro.locals.runtime.env.DB);
+const users = await getUsers(db);
+const currentUser = Astro.locals.user;
+---
+
+<App title="Usuarios">
+  <h2 class="text-xl font-bold text-brand-text mb-2">Gestao de usuarios</h2>
+  <p class="text-sm text-brand-text-secondary mb-6">Controle de acessos e permissoes do sistema.</p>
+
+  <div class="grid md:grid-cols-3 gap-4 mb-8">
+    {Object.entries(ROLE_LABELS).map(([key, label]) => (
+      <div class="bg-brand-surface rounded-xl p-5 border border-brand-border">
+        <p class="font-bold text-brand-text">{label}</p>
+        <p class="text-xs text-brand-text-secondary mt-2">{ROLE_DESCRIPTIONS[key as keyof typeof ROLE_DESCRIPTIONS]}</p>
+      </div>
+    ))}
+  </div>
+
+  <div class="bg-brand-surface rounded-xl border border-brand-border overflow-x-auto">
+    <table class="min-w-full text-sm">
+      <thead>
+        <tr class="text-left text-brand-text-secondary border-b border-brand-border bg-brand-bg">
+          <th class="px-6 py-3 font-medium">Nome</th>
+          <th class="px-6 py-3 font-medium">Email</th>
+          <th class="px-6 py-3 font-medium">Papel</th>
+          <th class="px-6 py-3 font-medium">Criado em</th>
+          <th class="px-6 py-3 font-medium">Atual</th>
+        </tr>
+      </thead>
+      <tbody>
+        {users.map((u) => (
+          <tr class="border-b border-brand-border last:border-0">
+            <td class="px-6 py-3 font-medium text-brand-text">{u.name}</td>
+            <td class="px-6 py-3 text-brand-text-secondary">{u.email}</td>
+            <td class="px-6 py-3">
+              <span class={`inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold ${u.role === 'admin' ? 'bg-brand-primary/20 text-brand-primary' : u.role === 'manager' ? 'bg-blue-100 text-blue-700' : 'bg-slate-100 text-slate-700'}`}>
+                {ROLE_LABELS[u.role] ?? u.role}
+              </span>
+            </td>
+            <td class="px-6 py-3 text-brand-text-secondary">{u.createdAt ? new Date(u.createdAt).toLocaleDateString('pt-BR') : '-'}</td>
+            <td class="px-6 py-3">
+              {currentUser?.id === u.id ? (
+                <span class="text-xs font-semibold text-brand-accent">Voce</span>
+              ) : (
+                <span class="text-xs text-brand-text-light">-</span>
+              )}
+            </td>
+          </tr>
+        ))}
+        {users.length === 0 && (
+          <tr>
+            <td colspan="5" class="px-6 py-8 text-center text-brand-text-secondary">Nenhum usuario cadastrado.</td>
+          </tr>
+        )}
+      </tbody>
+    </table>
+  </div>
+</App>

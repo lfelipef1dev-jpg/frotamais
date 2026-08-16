@@ -8,6 +8,20 @@
       "when": 1786867746702,
       "tag": "0000_deep_red_skull",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1786869373214,
+      "tag": "0001_fantastic_metal_master",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1786898604327,
+      "tag": "0002_burly_the_spike",
+      "breakpoints": true
     }
   ]
 }
