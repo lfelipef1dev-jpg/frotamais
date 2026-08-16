@@ -1,0 +1,36 @@
+---
+import App from '../../layouts/App.astro';
+import { maintenanceData, vehiclesData } from '../../data/seed';
+
+const vehiclesById = Object.fromEntries(vehiclesData.map(v => [v.id, v]));
+---
+
+<App title="Manutencao">
+  <h2 class="text-xl font-bold text-brand-text mb-6">Manutencao preventiva</h2>
+  <div class="bg-brand-surface rounded-xl border border-brand-border overflow-x-auto">
+    <table class="min-w-full text-sm">
+      <thead>
+        <tr class="text-left text-brand-text-secondary border-b border-brand-border bg-brand-bg">
+          <th class="px-6 py-3 font-medium">Veiculo</th>
+          <th class="px-6 py-3 font-medium">Servico</th>
+          <th class="px-6 py-3 font-medium">Data</th>
+          <th class="px-6 py-3 font-medium">Custo</th>
+          <th class="px-6 py-3 font-medium">Proximo km</th>
+          <th class="px-6 py-3 font-medium">Proxima data</th>
+        </tr>
+      </thead>
+      <tbody>
+        {maintenanceData.map(m => (
+          <tr class="border-b border-brand-border last:border-0">
+            <td class="px-6 py-3 font-medium text-brand-text">{vehiclesById[m.vehicleId]?.plate}</td>
+            <td class="px-6 py-3 text-brand-text-secondary">{m.description}</td>
+            <td class="px-6 py-3 text-brand-text-secondary">{new Date(m.performedAt).toLocaleDateString('pt-BR')}</td>
+            <td class="px-6 py-3 text-brand-text-secondary">R$ {m.cost?.toFixed(2)}</td>
+            <td class="px-6 py-3 text-brand-text-secondary">{m.nextDueKm?.toLocaleString('pt-BR') ?? '-'}</td>
+            <td class="px-6 py-3 text-brand-text-secondary">{m.nextDueDate ? new Date(m.nextDueDate).toLocaleDateString('pt-BR') : '-'}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+</App>

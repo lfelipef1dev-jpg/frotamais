@@ -1,0 +1,26 @@
+---
+import App from '../../layouts/App.astro';
+import { alertsData, vehiclesData } from '../../data/seed';
+
+const vehiclesById = Object.fromEntries(vehiclesData.map(v => [v.id, v]));
+---
+
+<App title="Alertas">
+  <h2 class="text-xl font-bold text-brand-text mb-6">Central de alertas</h2>
+  <div class="space-y-3">
+    {alertsData.map(a => (
+      <div class="bg-brand-surface rounded-xl p-4 border border-brand-border flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div class="flex items-start gap-3">
+          <span class={`w-3 h-3 mt-1 rounded-full flex-shrink-0 ${a.severity === 'critical' ? 'bg-red-500' : a.severity === 'high' ? 'bg-brand-warning' : 'bg-yellow-500'}`} aria-hidden="true" />
+          <div>
+            <p class="font-medium text-brand-text">{a.details}</p>
+            <p class="text-xs text-brand-text-secondary mt-1">{vehiclesById[a.vehicleId]?.plate} &bull; {new Date(a.triggeredAt).toLocaleString('pt-BR')}</p>
+          </div>
+        </div>
+        <span class={`text-xs font-semibold px-3 py-1 rounded-full ${a.resolvedAt ? 'bg-green-100 text-green-700' : a.severity === 'critical' ? 'bg-red-100 text-red-700' : 'bg-orange-100 text-orange-700'}`}>
+          {a.resolvedAt ? 'Resolvido' : 'Pendente'}
+        </span>
+      </div>
+    ))}
+  </div>
+</App>

@@ -1,0 +1,59 @@
+---
+interface Props {
+  title: string;
+}
+
+const { title } = Astro.props;
+const pathname = Astro.url.pathname;
+
+const menu = [
+  { label: 'Dashboard', href: '/app/dashboard' },
+  { label: 'Veículos', href: '/app/vehicles' },
+  { label: 'Motoristas', href: '/app/drivers' },
+  { label: 'Rotas', href: '/app/routes' },
+  { label: 'Manutenção', href: '/app/maintenance' },
+  { label: 'Combustível', href: '/app/fuel' },
+  { label: 'Alertas', href: '/app/alerts' },
+];
+---
+
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{title}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  </head>
+  <body class="bg-brand-bg text-brand-text font-sans">
+    <div class="flex min-h-screen">
+      <aside class="w-64 bg-brand-surface border-r border-brand-border hidden md:flex flex-col">
+        <a href="/" class="flex items-center gap-2 px-6 h-16 font-extrabold text-xl text-brand-primary border-b border-brand-border">
+          <svg class="w-7 h-7" aria-hidden="true" fill="currentColor" viewBox="0 0 24 24"><path d="M1 12c0 5.523 4.477 10 10 10s10-4.477 10-10S16.523 2 11 2 1 6.477 1 12Zm8.5 5V7h2v2.5a5.5 5.5 0 1 1 4.5 0V17h-2v-7.5a3.5 3.5 0 1 0-4.5 0V17h-2Z"/></svg>
+          Frotamais
+        </a>
+        <nav class="flex-1 p-4 space-y-1" aria-label="Principal">
+          {menu.map((item) => (
+            <a href={item.href} class={`block px-4 py-3 rounded-lg text-sm font-medium transition ${pathname === item.href ? 'bg-brand-primary text-white' : 'text-brand-text-secondary hover:bg-brand-bg'}`}>
+              {item.label}
+            </a>
+          ))}
+        </nav>
+        <div class="p-4 border-t border-brand-border text-xs text-brand-text-light">
+          Dados ilustrativos — sem fins comerciais.
+        </div>
+      </aside>
+      <main class="flex-1 min-w-0">
+        <div class="h-16 bg-brand-surface border-b border-brand-border flex items-center justify-between px-6">
+          <h1 class="font-bold text-lg">{title}</h1>
+          <div class="w-9 h-9 rounded-full bg-brand-primary/10 text-brand-primary flex items-center justify-center font-bold text-sm">OP</div>
+        </div>
+        <div class="p-6">
+          <slot />
+        </div>
+      </main>
+    </div>
+  </body>
+</html>

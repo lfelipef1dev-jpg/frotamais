@@ -1,0 +1,155 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { ArrowRight, Truck, Route, Fuel, Shield, Wrench, FileText } from 'lucide-react';
+
+const features = [
+  { icon: Truck, title: 'Rastreamento em tempo real', description: 'Acompanhe cada veículo da frota em um mapa ao vivo com atualizações de localização.' },
+  { icon: Route, title: 'Roteirização inteligente', description: 'Otimize rotas com algoritmos que reduzem quilometragem e tempo de entrega.' },
+  { icon: Fuel, title: 'Controle de combustível', description: 'Registre abastecimentos e identifique anomalias no consumo por veículo.' },
+  { icon: Shield, title: 'Score de segurança', description: 'Análise de eventos de direção para treinar motoristas e reduzir riscos.' },
+  { icon: Wrench, title: 'Manutenção preventiva', description: 'Cronograma automático por km, dias ou horas de uso, com alertas de vencimento.' },
+  { icon: FileText, title: 'Documentação e compliance', description: 'Centralize CNH, seguros, licenciamento e vencimentos em um só lugar.' },
+];
+---
+
+<Layout title="Frotamais - Gerenciador Inteligente de Frotas">
+  <header class="bg-brand-surface border-b border-brand-border sticky top-0 z-50">
+    <div class="max-w-6xl mx-auto px-4 md:px-6 h-16 flex items-center justify-between">
+      <a href="/" class="flex items-center gap-2 font-extrabold text-xl text-brand-primary">
+        <Truck className="w-7 h-7" aria-hidden="true" />
+        Frotamais
+      </a>
+      <nav class="hidden md:flex items-center gap-6 text-sm font-medium">
+        <a href="#funcionalidades" class="text-brand-text-secondary hover:text-brand-text">Funcionalidades</a>
+        <a href="#como-funciona" class="text-brand-text-secondary hover:text-brand-text">Como funciona</a>
+        <a href="#precos" class="text-brand-text-secondary hover:text-brand-text">Preços</a>
+      </nav>
+      <a href="/app/dashboard" class="inline-flex items-center gap-2 px-4 py-2 bg-brand-primary text-white rounded-lg font-semibold hover:bg-brand-primary-600 transition">Acessar demo <ArrowRight className="w-4 h-4" aria-hidden="true" /></a>
+    </div>
+  </header>
+
+  <main id="conteudo">
+    <section class="py-16 md:py-24 bg-gradient-to-br from-brand-bg to-brand-surface overflow-hidden">
+      <div class="max-w-6xl mx-auto px-4 md:px-6 grid md:grid-cols-2 gap-12 items-center">
+        <div>
+          <span class="text-brand-accent font-bold text-sm uppercase tracking-wider">Sua frota, sem planilhas</span>
+          <h1 class="text-4xl md:text-5xl lg:text-6xl font-extrabold leading-tight text-brand-text mt-4">Visibilidade total da sua frota em uma única plataforma</h1>
+          <p class="text-lg text-brand-text-secondary mt-6 max-w-xl">Rastreamento, manutenção, combustível, documentos e rotas. Tudo integrado para você tomar decisões com confiança e reduzir custos.</p>
+          <div class="flex flex-wrap gap-4 mt-8">
+            <a href="/app/dashboard" class="px-6 py-3 bg-brand-primary text-white rounded-lg font-semibold hover:bg-brand-primary-600 transition">Ver demo da plataforma</a>
+            <a href="#funcionalidades" class="px-6 py-3 border border-brand-border rounded-lg font-semibold hover:bg-brand-surface-elevated transition">Conhecer funcionalidades</a>
+          </div>
+          <div class="flex gap-8 mt-10 text-sm">
+            <div><strong class="block text-2xl text-brand-text">+35%</strong><span class="text-brand-text-secondary">eficiência estimada</span></div>
+            <div><strong class="block text-2xl text-brand-text">-60%</strong><span class="text-brand-text-secondary">atrasos em piloto</span></div>
+            <div><strong class="block text-2xl text-brand-text">12K</strong><span class="text-brand-text-secondary">economia mensal (alvo)</span></div>
+          </div>
+        </div>
+        <div class="relative">
+          <div class="bg-brand-surface rounded-2xl shadow-2xl border border-brand-border p-4 md:p-6 overflow-hidden">
+            <img src="/img/hero-truck.jpg" alt="Caminhao branco estacionado em frente a containers de carga, representando logistica e transporte" class="rounded-xl w-full h-64 md:h-80 object-cover" width="1200" height="800" loading="eager" />
+            <p class="text-xs text-brand-text-light mt-3 text-center">Imagem ilustrativa — licenca Unsplash</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="funcionalidades" class="py-16 md:py-20">
+      <div class="max-w-6xl mx-auto px-4 md:px-6">
+        <div class="text-center mb-14">
+          <h2 class="text-3xl md:text-4xl font-bold text-brand-text">Tudo que sua operação precisa</h2>
+          <p class="text-brand-text-secondary mt-4 max-w-2xl mx-auto">Módulos integrados para gestão completa da frota, do rastreamento até a manutenção preditiva.</p>
+        </div>
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {features.map((f) => (
+            <div class="bg-brand-surface rounded-xl p-6 border border-brand-border hover:shadow-lg transition">
+              <div class="w-12 h-12 rounded-lg bg-brand-primary/10 flex items-center justify-center text-brand-primary mb-4">
+                <f.icon className="w-6 h-6" aria-hidden="true" />
+              </div>
+              <h3 class="text-lg font-bold text-brand-text">{f.title}</h3>
+              <p class="text-brand-text-secondary mt-2 text-sm">{f.description}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section id="como-funciona" class="py-16 md:py-20 bg-brand-surface-elevated">
+      <div class="max-w-6xl mx-auto px-4 md:px-6">
+        <h2 class="text-3xl md:text-4xl font-bold text-brand-text text-center mb-14">Como funciona</h2>
+        <div class="grid md:grid-cols-3 gap-8">
+          <div class="text-center">
+            <div class="w-12 h-12 mx-auto rounded-full bg-brand-primary text-white flex items-center justify-center font-bold text-lg">1</div>
+            <h3 class="font-bold mt-4">Conecte a frota</h3>
+            <p class="text-brand-text-secondary mt-2 text-sm">Cadastre veículos, motoristas e dados dos ativos em minutos.</p>
+          </div>
+          <div class="text-center">
+            <div class="w-12 h-12 mx-auto rounded-full bg-brand-primary text-white flex items-center justify-center font-bold text-lg">2</div>
+            <h3 class="font-bold mt-4">Monitore operações</h3>
+            <p class="text-brand-text-secondary mt-2 text-sm">Acompanhe rotas, alertas, combustível e manutenção em tempo real.</p>
+          </div>
+          <div class="text-center">
+            <div class="w-12 h-12 mx-auto rounded-full bg-brand-primary text-white flex items-center justify-center font-bold text-lg">3</div>
+            <h3 class="font-bold mt-4">Decida com dados</h3>
+            <p class="text-brand-text-secondary mt-2 text-sm">Relatórios de TCO, consumo e segurança apontam onde otimizar.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="precos" class="py-16 md:py-20">
+      <div class="max-w-6xl mx-auto px-4 md:px-6">
+        <h2 class="text-3xl md:text-4xl font-bold text-brand-text text-center mb-14">Planos</h2>
+        <div class="grid md:grid-cols-3 gap-6">
+          <div class="bg-brand-surface rounded-xl p-6 border border-brand-border">
+            <h3 class="font-bold text-lg">Essencial</h3>
+            <p class="text-brand-text-secondary text-sm">Para frotas pequenas</p>
+            <div class="text-3xl font-extrabold my-4">R$ 0</div>
+            <ul class="text-sm text-brand-text-secondary space-y-2">
+              <li>Até 5 veículos</li>
+              <li>Rastreamento básico</li>
+              <li>Relatórios simples</li>
+            </ul>
+          </div>
+          <div class="bg-brand-surface rounded-xl p-6 border-2 border-brand-primary relative">
+            <span class="absolute -top-3 left-1/2 -translate-x-1/2 bg-brand-primary text-white text-xs font-bold px-3 py-1 rounded-full">Mais popular</span>
+            <h3 class="font-bold text-lg">Pro</h3>
+            <p class="text-brand-text-secondary text-sm">Para operações em crescimento</p>
+            <div class="text-3xl font-extrabold my-4">R$ 0</div>
+            <ul class="text-sm text-brand-text-secondary space-y-2">
+              <li>Até 50 veículos</li>
+              <li>Roteirização e geofencing</li>
+              <li>Manutenção preventiva</li>
+            </ul>
+          </div>
+          <div class="bg-brand-surface rounded-xl p-6 border border-brand-border">
+            <h3 class="font-bold text-lg">Enterprise</h3>
+            <p class="text-brand-text-secondary text-sm">Para grandes transportadoras</p>
+            <div class="text-3xl font-extrabold my-4">R$ 0</div>
+            <ul class="text-sm text-brand-text-secondary space-y-2">
+              <li>Frota ilimitada</li>
+              <li>API e integrações</li>
+              <li>Suporte dedicado</li>
+            </ul>
+          </div>
+        </div>
+        <p class="text-center text-brand-text-light text-sm mt-8">Valores simulados para demonstração. Não representam oferta comercial.</p>
+      </div>
+    </section>
+
+    <section class="py-16 md:py-20 bg-brand-primary text-white">
+      <div class="max-w-4xl mx-auto px-4 md:px-6 text-center">
+        <h2 class="text-3xl md:text-4xl font-bold">Pronto para testar a demo?</h2>
+        <p class="text-white/80 mt-4">Acesse o painel com dados simulados e veja a plataforma em ação.</p>
+        <a href="/app/dashboard" class="inline-flex items-center gap-2 mt-8 px-8 py-4 bg-white text-brand-primary rounded-lg font-bold hover:bg-brand-bg transition">Acessar demo <ArrowRight className="w-5 h-5" aria-hidden="true" /></a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="bg-brand-surface border-t border-brand-border py-10">
+    <div class="max-w-6xl mx-auto px-4 md:px-6 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-brand-text-secondary">
+      <p>&copy; 2026 Frotamais. Projeto de portfólio ExpoStacker.</p>
+      <p>Dados ilustrativos. Sem fins comerciais.</p>
+    </div>
+  </footer>
+</Layout>

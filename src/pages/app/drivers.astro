@@ -1,0 +1,28 @@
+---
+import App from '../../layouts/App.astro';
+import { driversData } from '../../data/seed';
+---
+
+<App title="Motoristas">
+  <h2 class="text-xl font-bold text-brand-text mb-6">Motoristas</h2>
+  <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+    {driversData.map(d => (
+      <div class="bg-brand-surface rounded-xl p-5 border border-brand-border">
+        <div class="flex items-center gap-3 mb-3">
+          <div class="w-10 h-10 rounded-full bg-brand-primary/10 text-brand-primary flex items-center justify-center font-bold">
+            {d.name.split(' ').map(n => n[0]).slice(0, 2).join('')}
+          </div>
+          <div>
+            <p class="font-bold text-brand-text">{d.name}</p>
+            <p class="text-xs text-brand-text-secondary">{d.phone}</p>
+          </div>
+        </div>
+        <div class="text-sm text-brand-text-secondary space-y-1">
+          <p>Score de seguranca: <span class="font-semibold text-brand-text">{d.safetyScore}/100</span></p>
+          <p>Viagens: {d.totalTrips} | {d.totalKm.toLocaleString('pt-BR')} km</p>
+          <p>CNH valida ate: {new Date(d.licenseExpiry).toLocaleDateString('pt-BR')}</p>
+        </div>
+      </div>
+    ))}
+  </div>
+</App>

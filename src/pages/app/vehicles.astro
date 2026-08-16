@@ -1,0 +1,44 @@
+---
+import App from '../../layouts/App.astro';
+import { vehiclesData, driversData } from '../../data/seed';
+
+const driversById = Object.fromEntries(driversData.map(d => [d.id, d]));
+---
+
+<App title="Veiculos">
+  <h2 class="text-xl font-bold text-brand-text mb-6">Frota completa</h2>
+  <div class="bg-brand-surface rounded-xl border border-brand-border overflow-x-auto">
+    <table class="min-w-full text-sm">
+      <thead>
+        <tr class="text-left text-brand-text-secondary border-b border-brand-border bg-brand-bg">
+          <th class="px-6 py-3 font-medium">Placa</th>
+          <th class="px-6 py-3 font-medium">Veiculo</th>
+          <th class="px-6 py-3 font-medium">Ano</th>
+          <th class="px-6 py-3 font-medium">Tipo</th>
+          <th class="px-6 py-3 font-medium">Status</th>
+          <th class="px-6 py-3 font-medium">Motorista</th>
+          <th class="px-6 py-3 font-medium">Km</th>
+          <th class="px-6 py-3 font-medium">Combustivel</th>
+        </tr>
+      </thead>
+      <tbody>
+        {vehiclesData.map(v => (
+          <tr class="border-b border-brand-border last:border-0">
+            <td class="px-6 py-3 font-medium text-brand-text">{v.plate}</td>
+            <td class="px-6 py-3 text-brand-text-secondary">{v.make} {v.model}</td>
+            <td class="px-6 py-3 text-brand-text-secondary">{v.year}</td>
+            <td class="px-6 py-3 text-brand-text-secondary">{v.type}</td>
+            <td class="px-6 py-3">
+              <span class={`inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold ${v.status === 'in_use' ? 'bg-green-100 text-green-700' : v.status === 'maintenance' ? 'bg-orange-100 text-orange-700' : v.status === 'unavailable' ? 'bg-red-100 text-red-700' : 'bg-slate-100 text-slate-700'}`}>
+                {v.status === 'in_use' ? 'Em rota' : v.status === 'maintenance' ? 'Manutencao' : v.status === 'unavailable' ? 'Indisponivel' : 'Disponivel'}
+              </span>
+            </td>
+            <td class="px-6 py-3 text-brand-text-secondary">{v.assignedDriverId ? driversById[v.assignedDriverId]?.name : '-'}</td>
+            <td class="px-6 py-3 text-brand-text-secondary">{v.currentOdometer.toLocaleString('pt-BR')} km</td>
+            <td class="px-6 py-3 text-brand-text-secondary">{v.fuelLevel}%</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+</App>

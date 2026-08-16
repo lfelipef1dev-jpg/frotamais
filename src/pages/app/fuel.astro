@@ -1,0 +1,56 @@
+---
+import App from '../../layouts/App.astro';
+import { fuelLogsData, vehiclesData } from '../../data/seed';
+
+const vehiclesById = Object.fromEntries(vehiclesData.map(v => [v.id, v]));
+const totalLiters = fuelLogsData.reduce((acc, f) => acc + f.liters, 0);
+const totalCost = fuelLogsData.reduce((acc, f) => acc + f.cost, 0);
+---
+
+<App title="Combustivel">
+  <h2 class="text-xl font-bold text-brand-text mb-6">Controle de combustivel</h2>
+  <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+    <div class="bg-brand-surface rounded-xl p-5 border border-brand-border">
+      <p class="text-sm text-brand-text-secondary">Total abastecido</p>
+      <p class="text-2xl font-extrabold text-brand-text mt-1">{totalLiters.toFixed(1)} L</p>
+    </div>
+    <div class="bg-brand-surface rounded-xl p-5 border border-brand-border">
+      <p class="text-sm text-brand-text-secondary">Gasto total</p>
+      <p class="text-2xl font-extrabold text-brand-text mt-1">R$ {totalCost.toFixed(2)}</p>
+    </div>
+    <div class="bg-brand-surface rounded-xl p-5 border border-brand-border">
+      <p class="text-sm text-brand-text-secondary">Preço medio/litro</p>
+      <p class="text-2xl font-extrabold text-brand-text mt-1">R$ {(totalCost / totalLiters).toFixed(2)}</p>
+    </div>
+    <div class="bg-brand-surface rounded-xl p-5 border border-brand-border">
+      <p class="text-sm text-brand-text-secondary">Registros</p>
+      <p class="text-2xl font-extrabold text-brand-text mt-1">{fuelLogsData.length}</p>
+    </div>
+  </div>
+  <div class="bg-brand-surface rounded-xl border border-brand-border overflow-x-auto">
+    <table class="min-w-full text-sm">
+      <thead>
+        <tr class="text-left text-brand-text-secondary border-b border-brand-border bg-brand-bg">
+          <th class="px-6 py-3 font-medium">Data</th>
+          <th class="px-6 py-3 font-medium">Veiculo</th>
+          <th class="px-6 py-3 font-medium">Quilometragem</th>
+          <th class="px-6 py-3 font-medium">Litros</th>
+          <th class="px-6 py-3 font-medium">Custo</th>
+          <th class="px-6 py-3 font-medium">Posto</th>
+        </tr>
+      </thead>
+      <tbody>
+        {fuelLogsData.map(f => (
+          <tr class="border-b border-brand-border last:border-0">
+            <td class="px-6 py-3 text-brand-text-secondary">{new Date(f.date).toLocaleString('pt-BR')}</td>
+            <td class="px-6 py-3 font-medium text-brand-text">{vehiclesById[f.vehicleId]?.plate}</td>
+            <td class="px-6 py-3 text-brand-text-secondary">{f.odometer.toLocaleString('pt-BR')} km</td>
+            <td class="px-6 py-3 text-brand-text-secondary">{f.liters} L</td>
+            <td class="px-6 py-3 text-brand-text-secondary">R$ {f.cost.toFixed(2)}</td>
+            <td class="px-6 py-3 text-brand-text-secondary">{f.station}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+</App>

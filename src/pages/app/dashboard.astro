@@ -1,0 +1,91 @@
+---
+import App from '../../layouts/App.astro';
+import { KPICard } from '../../components/dashboard/KPICard';
+import { vehiclesData, tripsData, alertsData, fuelLogsData } from '../../data/seed';
+
+const active = vehiclesData.filter(v => v.status === 'in_use' || v.status === 'available').length;
+const inMaintenance = vehiclesData.filter(v => v.status === 'maintenance').length;
+const totalKm = vehiclesData.reduce((acc, v) => acc + v.currentOdometer, 0);
+const criticalAlerts = alertsData.filter(a => a.severity === 'critical' && !a.resolvedAt).length;
+
+const totalFuelLiters = fuelLogsData.reduce((acc, f) => acc + f.liters, 0);
+const totalFuelCost = fuelLogsData.reduce((acc, f) => acc + f.cost, 0);
+
+const latestAlerts = alertsData.slice(0, 5);
+
+const recentVehicles = vehiclesData.slice(0, 5);
+---
+
+<App title="Dashboard">
+  <div class="mb-6">
+    <h2 class="text-xl font-bold text-brand-text">Visao geral da frota</h2>
+    <p class="text-sm text-brand-text-secondary">Dados atualizados em tempo real (simulado).</p>
+  </div>
+
+  <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+    <KPICard client:load label="Veiculos ativos" value={active.toString()} trend="+2 desde ontem" trendUp={true} />
+    <KPICard client:load label="Em manutencao" value={inMaintenance.toString()} trend="1 agendado" trendUp={false} />
+    <KPICard client:load label="Quilometragem total" value={`${(totalKm / 1000).toFixed(1)}k km`} trend="+1,2k km (piloto)" trendUp={true} />
+    <KPICard client:load label="Alertas criticos" value={criticalAlerts.toString()} trend="Resolvido 1 na ultima hora" trendUp={true} />
+  </div>
+
+  <div class="grid lg:grid-cols-2 gap-6 mb-8">
+    <section class="bg-brand-surface rounded-xl p-6 border border-brand-border" aria-labelledby="consumo-titulo">
+      <h3 id="consumo-titulo" class="font-bold text-brand-text mb-4">Consumo de combustivel (litros)</h3>
+      <svg viewBox="0 0 300 120" class="w-full h-40" role="img" aria-label="Grafico de consumo de combustivel">
+        <rect x="10" y="10" width="40" height="80" fill="#1E3A8A" rx="4" />
+        <rect x="65" y="30" width="40" height="60" fill="#1E3A8A" rx="4" />
+        <rect x="120" y="45" width="40" height="45" fill="#1E3A8A" rx="4" />
+        <rect x="175" y="25" width="40" height="65" fill="#1E3A8A" rx="4" />
+        <rect x="230" y="15" width="40" height="75" fill="#1E3A8A" rx="4" />
+      </svg>
+      <p class="sr-only">Veiculos V1 a V5 consumiram respectivamente 80, 60, 45, 65 e 75 litros.</p>
+      <p class="text-xs text-brand-text-light mt-2">Total de {totalFuelLiters.toFixed(1)} litros — R$ {totalFuelCost.toFixed(2)} (valores simulados)</p>
+    </section>
+
+    <section class="bg-brand-surface rounded-xl p-6 border border-brand-border" aria-labelledby="alertas-titulo">
+      <h3 id="alertas-titulo" class="font-bold text-brand-text mb-4">Ultimos alertas</h3>
+      <ul class="space-y-3">
+        {latestAlerts.map(a => (
+          <li class="flex items-start gap-3 text-sm">
+            <span class={`w-2 h-2 mt-1.5 rounded-full flex-shrink-0 ${a.severity === 'critical' ? 'bg-red-500' : a.severity === 'high' ? 'bg-orange-500' : 'bg-yellow-500'}`} aria-hidden="true" />
+            <div>
+              <p class="text-brand-text font-medium">{a.details}</p>
+              <p class="text-brand-text-secondary text-xs">{new Date(a.triggeredAt).toLocaleString('pt-BR')}</p>
+            </div>
+          </li>
+        ))}
+      </ul>
+    </section>
+  </div>
+
+  <section class="bg-brand-surface rounded-xl p-6 border border-brand-border overflow-x-auto" aria-labelledby="veiculos-titulo">
+    <h3 id="veiculos-titulo" class="font-bold text-brand-text mb-4">Veiculos em operacao</h3>
+    <table class="min-w-full text-sm">
+      <thead>
+        <tr class="text-left text-brand-text-secondary border-b border-brand-border">
+          <th class="pb-2 font-medium">Placa</th>
+          <th class="pb-2 font-medium">Modelo</th>
+          <th class="pb-2 font-medium">Status</th>
+          <th class="pb-2 font-medium">Km atual</th>
+          <th class="pb-2 font-medium">Combustivel</th>
+        </tr>
+      </thead>
+      <tbody>
+        {recentVehicles.map(v => (
+          <tr class="border-b border-brand-border last:border-0">
+            <td class="py-3 font-medium text-brand-text">{v.plate}</td>
+            <td class="py-3 text-brand-text-secondary">{v.make} {v.model}</td>
+            <td class="py-3">
+              <span class={`inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold ${v.status === 'in_use' ? 'bg-green-100 text-green-700' : v.status === 'maintenance' ? 'bg-orange-100 text-orange-700' : 'bg-slate-100 text-slate-700'}`}>
+                {v.status === 'in_use' ? 'Em rota' : v.status === 'maintenance' ? 'Manutencao' : 'Disponivel'}
+              </span>
+            </td>
+            <td class="py-3 text-brand-text-secondary">{v.currentOdometer.toLocaleString('pt-BR')} km</td>
+            <td class="py-3 text-brand-text-secondary">{v.fuelLevel}%</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </section>
+</App>
