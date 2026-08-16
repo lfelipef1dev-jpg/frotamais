@@ -1,14 +1,8 @@
-feat: CRUD na interface, sino de notificacoes, geofences, graficos dinamicos
+fix: corrige GeofenceMap com CSS do Leaflet e inicializacao unica
 
-- Componente VehiclesManager com busca, filtros, adicionar e remover veiculos
-- Componente DriversManager com busca, adicionar e remover motoristas
-- Componente CrudModal reutilizavel para formularios
-- Componente NotificationBell com contador de alertas pendentes
-- Componente GeofenceMap com circulos de areas e veiculos no mapa
-- Pagina /app/geofences com KPIs, mapa e tabela de areas
-- Dashboard com BarChart real de consumo (substitui SVG estatico)
-- Layout App carrega alertas e mostra sino no top bar
-- Menu lateral com item Geofences adicionado
+- Importa leaflet/dist/leaflet.css (faltava, causava tiles duplicados)
+- Import estatico em vez de dinamico
+- useEffect com dependencias vazias para evitar re-inicializacao
 
 Generated with [Devin](https://devin.ai)
 
