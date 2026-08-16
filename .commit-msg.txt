@@ -1,15 +1,9 @@
-feat: evolui de mock para MVP funcional com D1, auth, VRP, SSE e Leaflet
+feat: botao Acessar demo na tela de login
 
-- Cloudflare D1 real com Drizzle ORM e migrations aplicadas em producao
-- Better Auth com sessao via KV e middleware protegendo rotas /app/*
-- Durable Object FleetTracker com SSE para rastreamento em tempo real
-- Algoritmo VRP (Nearest Neighbor + 2-opt) com distancia haversine
-- Leaflet no dashboard com posicoes atualizando via SSE
-- Score de seguranca calculado em tempo real de eventos de telemetria
-- Paginas de sign-in e sign-up com componentes React
-- API Hono lendo do D1 em vez de seed em memoria
-- Custom worker entry point exportando FleetTracker
-- Deploy workflow com migrations D1 e secrets automatizados
+- Botao "Acessar demo" que cria conta demo e entra direto
+- Credenciais demo fixas (demo@frotamais.expostacker.com.br)
+- Tenta signUp; se usuario ja existe, faz signIn
+- Sem precisar digitar email/senha
 
 Generated with [Devin](https://devin.ai)
 
