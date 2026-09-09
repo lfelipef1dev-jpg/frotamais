@@ -5,6 +5,7 @@ import FleetMap from '../../components/dashboard/FleetMap';
 import BarChart from '../../components/dashboard/BarChart';
 import { getDb } from '../../db/client';
 import { getFleetSummary, getVehicles, getFuelLogs } from '../../db/queries';
+import { Activity, Wrench, MapPin, AlertTriangle } from 'lucide-react';
 
 export const prerender = false;
 
@@ -31,7 +32,6 @@ const initialPositions = vehicles
     lng: v.currentLng!,
   }));
 
-// Dados reais para o grafico de combustivel
 const fuelByVehicle = vehicles.map((v) => {
   const logs = fuelLogs.filter((f) => f.vehicleId === v.id);
   return {
@@ -40,24 +40,43 @@ const fuelByVehicle = vehicles.map((v) => {
     color: '#1E3A8A',
   };
 }).filter((d) => d.value > 0).sort((a, b) => b.value - a.value);
+
+const statusLabel = (status: string) => ({
+  in_use: 'Em rota',
+  maintenance: 'Manutenção',
+  unavailable: 'Indisponível',
+  available: 'Disponível',
+}[status] ?? status);
+
+const statusClass = (status: string) => {
+  switch (status) {
+    case 'in_use': return 'bg-green-100 text-green-700';
+    case 'maintenance': return 'bg-orange-100 text-orange-700';
+    case 'unavailable': return 'bg-red-100 text-red-700';
+    default: return 'bg-slate-100 text-slate-700';
+  }
+};
 ---
 
 <App title="Dashboard">
-  <div class="mb-6">
-    <h2 class="text-xl font-bold text-brand-text">Visao geral da frota</h2>
-    <p class="text-sm text-brand-text-secondary">Dados do banco D1. Posicoes atualizam via SSE em tempo real.</p>
+  <div class="mb-8">
+    <h2 class="text-2xl font-extrabold text-brand-text">Visão geral da frota</h2>
+    <p class="text-sm text-brand-text-secondary mt-1">Dados do banco D1. Posições atualizam via SSE em tempo real.</p>
   </div>
 
-  <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-    <KPICard client:load label="Veiculos ativos" value={summary.activeVehicles.toString()} trend="Dados do D1" trendUp={true} />
-    <KPICard client:load label="Em manutencao" value={summary.inMaintenance.toString()} trend="Dados do D1" trendUp={false} />
-    <KPICard client:load label="Quilometragem total" value={`${(summary.totalKm / 1000).toFixed(1)}k km`} trend="Dados do D1" trendUp={true} />
-    <KPICard client:load label="Alertas criticos" value={summary.criticalAlerts.toString()} trend="Dados do D1" trendUp={true} />
+  <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
+    <KPICard client:load label="Veículos ativos" value={summary.activeVehicles.toString()} trend="Em operação" trendUp={true} />
+    <KPICard client:load label="Em manutenção" value={summary.inMaintenance.toString()} trend="Agendados" trendUp={false} />
+    <KPICard client:load label="Quilometragem total" value={`${(summary.totalKm / 1000).toFixed(1)}k km`} trend="Acumulado" trendUp={true} />
+    <KPICard client:load label="Alertas críticos" value={summary.criticalAlerts.toString()} trend="Requerem atenção" trendUp={true} />
   </div>
 
-  <section class="bg-brand-surface rounded-xl p-6 border border-brand-border mb-8" aria-labelledby="mapa-titulo">
-    <h3 id="mapa-titulo" class="font-bold text-brand-text mb-4">Localizacao dos veiculos (tempo real via SSE)</h3>
-    <div class="h-96 w-full rounded-lg overflow-hidden">
+  <section class="bg-white rounded-2xl p-6 border border-brand-border shadow-sm mb-8" aria-labelledby="mapa-titulo">
+    <div class="flex items-center gap-2 mb-4">
+      <MapPin class="w-5 h-5 text-brand-primary" aria-hidden="true" />
+      <h3 id="mapa-titulo" class="font-bold text-brand-text">Localização dos veículos (tempo real via SSE)</h3>
+    </div>
+    <div class="h-96 w-full rounded-xl overflow-hidden border border-brand-border">
       {mapVehicles.length > 0 ? (
         <FleetMap
           client:only="react"
@@ -67,26 +86,29 @@ const fuelByVehicle = vehicles.map((v) => {
           zoom={4}
         />
       ) : (
-        <div class="h-full flex items-center justify-center text-brand-text-secondary">
-          Nenhum veiculo com posicao disponivel.
+        <div class="h-full flex items-center justify-center text-brand-text-secondary bg-brand-bg">
+          Nenhum veículo com posição disponível.
         </div>
       )}
     </div>
-    <p class="text-xs text-brand-text-light mt-2">Mapa Leaflet + OpenStreetMap. Posicoes simuladas via Durable Object.</p>
+    <p class="text-xs text-brand-text-light mt-3">Mapa Leaflet + OpenStreetMap. Posições simuladas via Durable Object.</p>
   </section>
 
   <div class="grid lg:grid-cols-2 gap-6 mb-8">
-    <section class="bg-brand-surface rounded-xl p-6 border border-brand-border" aria-labelledby="consumo-titulo">
-      <h3 id="consumo-titulo" class="font-bold text-brand-text mb-4">Consumo de combustivel (litros)</h3>
+    <section class="bg-white rounded-2xl p-6 border border-brand-border shadow-sm" aria-labelledby="consumo-titulo">
+      <h3 id="consumo-titulo" class="font-bold text-brand-text mb-4">Consumo de combustível (litros)</h3>
       <BarChart client:only="react" data={fuelByVehicle} title="" unit="L" />
-      <p class="text-xs text-brand-text-light mt-2">Total de {summary.totalFuelLiters.toFixed(1)} litros — R$ {summary.totalFuelCost.toFixed(2)} (valores simulados)</p>
+      <p class="text-xs text-brand-text-light mt-3">Total de {summary.totalFuelLiters.toFixed(1)} litros — R$ {summary.totalFuelCost.toFixed(2)} (valores simulados)</p>
     </section>
 
-    <section class="bg-brand-surface rounded-xl p-6 border border-brand-border" aria-labelledby="alertas-titulo">
-      <h3 id="alertas-titulo" class="font-bold text-brand-text mb-4">Ultimos alertas</h3>
+    <section class="bg-white rounded-2xl p-6 border border-brand-border shadow-sm" aria-labelledby="alertas-titulo">
+      <div class="flex items-center gap-2 mb-4">
+        <AlertTriangle class="w-5 h-5 text-brand-warning" aria-hidden="true" />
+        <h3 id="alertas-titulo" class="font-bold text-brand-text">Últimos alertas</h3>
+      </div>
       <ul class="space-y-3">
         {summary.recentAlerts.map((a) => (
-          <li class="flex items-start gap-3 text-sm">
+          <li class="flex items-start gap-3 text-sm p-3 rounded-xl bg-brand-bg/50">
             <span class={`w-2 h-2 mt-1.5 rounded-full flex-shrink-0 ${a.severity === 'critical' ? 'bg-red-500' : a.severity === 'high' ? 'bg-orange-500' : 'bg-yellow-500'}`} aria-hidden="true" />
             <div>
               <p class="text-brand-text font-medium">{a.details}</p>
@@ -98,30 +120,30 @@ const fuelByVehicle = vehicles.map((v) => {
     </section>
   </div>
 
-  <section class="bg-brand-surface rounded-xl p-6 border border-brand-border overflow-x-auto" aria-labelledby="veiculos-titulo">
-    <h3 id="veiculos-titulo" class="font-bold text-brand-text mb-4">Veiculos em operacao</h3>
+  <section class="bg-white rounded-2xl p-6 border border-brand-border shadow-sm overflow-x-auto" aria-labelledby="veiculos-titulo">
+    <h3 id="veiculos-titulo" class="font-bold text-brand-text mb-4">Veículos em operação</h3>
     <table class="min-w-full text-sm">
       <thead>
         <tr class="text-left text-brand-text-secondary border-b border-brand-border">
-          <th class="pb-2 font-medium">Placa</th>
-          <th class="pb-2 font-medium">Modelo</th>
-          <th class="pb-2 font-medium">Status</th>
-          <th class="pb-2 font-medium">Km atual</th>
-          <th class="pb-2 font-medium">Combustivel</th>
+          <th class="pb-3 font-semibold">Placa</th>
+          <th class="pb-3 font-semibold">Modelo</th>
+          <th class="pb-3 font-semibold">Status</th>
+          <th class="pb-3 font-semibold">Km atual</th>
+          <th class="pb-3 font-semibold">Combustível</th>
         </tr>
       </thead>
       <tbody>
         {vehicles.map((v) => (
-          <tr class="border-b border-brand-border last:border-0">
-            <td class="py-3 font-medium text-brand-text">{v.plate}</td>
-            <td class="py-3 text-brand-text-secondary">{v.make} {v.model}</td>
-            <td class="py-3">
-              <span class={`inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold ${v.status === 'in_use' ? 'bg-green-100 text-green-700' : v.status === 'maintenance' ? 'bg-orange-100 text-orange-700' : 'bg-slate-100 text-slate-700'}`}>
-                {v.status === 'in_use' ? 'Em rota' : v.status === 'maintenance' ? 'Manutencao' : 'Disponivel'}
+          <tr class="border-b border-brand-border last:border-0 hover:bg-brand-bg/30 transition">
+            <td class="py-3.5 font-semibold text-brand-text">{v.plate}</td>
+            <td class="py-3.5 text-brand-text-secondary">{v.make} {v.model}</td>
+            <td class="py-3.5">
+              <span class={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold ${statusClass(v.status)}`}>
+                {statusLabel(v.status)}
               </span>
             </td>
-            <td class="py-3 text-brand-text-secondary">{v.currentOdometer.toLocaleString('pt-BR')} km</td>
-            <td class="py-3 text-brand-text-secondary">{v.fuelLevel}%</td>
+            <td class="py-3.5 text-brand-text-secondary">{v.currentOdometer.toLocaleString('pt-BR')} km</td>
+            <td class="py-3.5 text-brand-text-secondary">{v.fuelLevel}%</td>
           </tr>
         ))}
       </tbody>
