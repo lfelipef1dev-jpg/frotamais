@@ -35,7 +35,7 @@ export default function AlertsManager({ initialAlerts }: { initialAlerts: AlertI
   return (
     <div>
       <div className="flex flex-wrap gap-3 mb-6">
-        <div className="flex gap-1 bg-brand-surface rounded-lg border border-brand-border p-1">
+        <div className="flex gap-1 bg-white rounded-lg border border-brand-border p-1 shadow-sm">
           {(['all', 'pending', 'resolved'] as const).map((f) => (
             <button
               key={f}
@@ -49,19 +49,19 @@ export default function AlertsManager({ initialAlerts }: { initialAlerts: AlertI
         <select
           value={severityFilter}
           onChange={(e) => setSeverityFilter(e.target.value as any)}
-          className="bg-brand-surface border border-brand-border rounded-lg px-3 py-1.5 text-sm text-brand-text focus-visible:ring-2 focus-visible:ring-brand-accent outline-none"
+          className="bg-white border border-brand-border rounded-lg px-3 py-1.5 text-sm text-brand-text focus-visible:ring-2 focus-visible:ring-brand-primary outline-none"
         >
           <option value="all">Todas as severidades</option>
-          <option value="critical">Critico</option>
+          <option value="critical">Crítico</option>
           <option value="high">Alto</option>
-          <option value="medium">Medio</option>
+          <option value="medium">Médio</option>
           <option value="low">Baixo</option>
         </select>
       </div>
 
       <div className="space-y-3">
         {filtered.map((a) => (
-          <div key={a.id} className="bg-brand-surface rounded-xl p-4 border border-brand-border flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div key={a.id} className="bg-white rounded-xl p-4 border border-brand-border shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div className="flex items-start gap-3">
               <span className={`w-3 h-3 mt-1 rounded-full flex-shrink-0 ${a.severity === 'critical' ? 'bg-red-500' : a.severity === 'high' ? 'bg-orange-500' : 'bg-yellow-500'}`} aria-hidden="true" />
               <div>

@@ -1,4 +1,4 @@
----
+﻿---
 import App from '../../../layouts/App.astro';
 import { getDb } from '../../../db/client';
 import { getDriver, getTripsForDriver, getSafetyEventsForDriver, getVehicles } from '../../../db/queries';
@@ -64,17 +64,17 @@ const completedTrips = trips.filter((t) => t.status === 'completed').length;
     </div>
     <div class="bg-brand-surface rounded-xl p-5 border border-brand-border">
       <p class="text-sm text-brand-text-secondary">Viagens</p>
-      <p class="text-2xl font-extrabold text-brand-text mt-1">{completedTrips} <span class="text-sm font-normal text-brand-text-secondary">concluidas</span></p>
+      <p class="text-2xl font-extrabold text-brand-text mt-1">{completedTrips} <span class="text-sm font-normal text-brand-text-secondary">concluídas</span></p>
     </div>
     <div class="bg-brand-surface rounded-xl p-5 border border-brand-border">
-      <p class="text-sm text-brand-text-secondary">Distancia total</p>
+      <p class="text-sm text-brand-text-secondary">Distância total</p>
       <p class="text-2xl font-extrabold text-brand-text mt-1">{totalDistance.toLocaleString('pt-BR')} <span class="text-sm font-normal text-brand-text-secondary">km</span></p>
     </div>
   </div>
 
   <div class="grid lg:grid-cols-2 gap-6 mb-8">
     <div class="bg-brand-surface rounded-xl border border-brand-border p-5">
-      <h3 class="font-bold text-brand-text mb-4">Detalhamento do score de seguranca</h3>
+      <h3 class="font-bold text-brand-text mb-4">Detalhamento do score de segurança</h3>
       <p class="text-xs text-brand-text-secondary mb-4">Calculado em tempo real a partir de {events.length} eventos de telemetria.</p>
       <div class="space-y-3">
         {scoreBreakdown.map((b) => (
@@ -89,13 +89,13 @@ const completedTrips = trips.filter((t) => t.status === 'completed').length;
           </div>
         ))}
         {scoreBreakdown.length === 0 && (
-          <p class="text-sm text-brand-text-secondary">Nenhum evento registrado. Score maximo.</p>
+          <p class="text-sm text-brand-text-secondary">Nenhum evento registrado. Score máximo.</p>
         )}
       </div>
     </div>
 
     <div class="bg-brand-surface rounded-xl border border-brand-border p-5">
-      <h3 class="font-bold text-brand-text mb-4">Documentacao</h3>
+      <h3 class="font-bold text-brand-text mb-4">Documentação</h3>
       <div class="space-y-3 text-sm">
         <div class="flex justify-between">
           <span class="text-brand-text-secondary">CNH</span>
@@ -109,8 +109,8 @@ const completedTrips = trips.filter((t) => t.status === 'completed').length;
           </span>
         </div>
         <div class="flex justify-between">
-          <span class="text-brand-text-secondary">Veiculo atual</span>
-          <span class="text-brand-text font-medium">{driver.currentVehicleId ? vehiclesById[driver.currentVehicleId]?.plate ?? '-' : 'Sem atribuicao'}</span>
+          <span class="text-brand-text-secondary">Veículo atual</span>
+          <span class="text-brand-text font-medium">{driver.currentVehicleId ? vehiclesById[driver.currentVehicleId]?.plate ?? '-' : 'Sem atribuição'}</span>
         </div>
         <div class="flex justify-between">
           <span class="text-brand-text-secondary">Total de viagens</span>
@@ -132,7 +132,7 @@ const completedTrips = trips.filter((t) => t.status === 'completed').length;
           <th class="px-6 py-3 font-medium">Tipo</th>
           <th class="px-6 py-3 font-medium">Severidade</th>
           <th class="px-6 py-3 font-medium">Velocidade</th>
-          <th class="px-6 py-3 font-medium">Veiculo</th>
+          <th class="px-6 py-3 font-medium">Veículo</th>
           <th class="px-6 py-3 font-medium">Data</th>
         </tr>
       </thead>
@@ -158,13 +158,13 @@ const completedTrips = trips.filter((t) => t.status === 'completed').length;
   </div>
 
   <div class="bg-brand-surface rounded-xl border border-brand-border overflow-x-auto">
-    <h3 class="font-bold text-brand-text px-6 py-4 border-b border-brand-border">Historico de viagens ({trips.length})</h3>
+    <h3 class="font-bold text-brand-text px-6 py-4 border-b border-brand-border">Histórico de viagens ({trips.length})</h3>
     <table class="min-w-full text-sm">
       <thead>
         <tr class="text-left text-brand-text-secondary border-b border-brand-border bg-brand-bg">
           <th class="px-6 py-3 font-medium">Rota</th>
-          <th class="px-6 py-3 font-medium">Veiculo</th>
-          <th class="px-6 py-3 font-medium">Distancia</th>
+          <th class="px-6 py-3 font-medium">Veículo</th>
+          <th class="px-6 py-3 font-medium">Distância</th>
           <th class="px-6 py-3 font-medium">Status</th>
           <th class="px-6 py-3 font-medium">Data</th>
         </tr>
@@ -177,7 +177,7 @@ const completedTrips = trips.filter((t) => t.status === 'completed').length;
             <td class="px-6 py-3 text-brand-text-secondary">{t.distanceKm ? `${t.distanceKm} km` : '-'}</td>
             <td class="px-6 py-3">
               <span class={`inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold ${t.status === 'completed' ? 'bg-green-100 text-green-700' : t.status === 'in_progress' ? 'bg-blue-100 text-blue-700' : 'bg-slate-100 text-slate-700'}`}>
-                {t.status === 'completed' ? 'Concluida' : t.status === 'in_progress' ? 'Em andamento' : t.status}
+                {t.status === 'completed' ? 'Concluída' : t.status === 'in_progress' ? 'Em andamento' : t.status}
               </span>
             </td>
             <td class="px-6 py-3 text-brand-text-secondary">{t.startedAt ? new Date(t.startedAt).toLocaleDateString('pt-BR') : '-'}</td>

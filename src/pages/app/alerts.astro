@@ -1,4 +1,4 @@
----
+﻿---
 import App from '../../layouts/App.astro';
 import { getDb } from '../../db/client';
 import { getAlerts, getVehicles } from '../../db/queries';
@@ -18,7 +18,7 @@ const alertsWithPlate = alerts.map((a) => ({
 ---
 
 <App title="Alertas">
-  <h2 class="text-xl font-bold text-brand-text mb-2">Central de alertas</h2>
+  <h2 class="text-2xl font-extrabold text-brand-text mb-2">Central de alertas</h2>
   <p class="text-sm text-brand-text-secondary mb-6">Filtre por status e severidade. Resolva alertas pendentes com um clique.</p>
   <AlertsManager client:only="react" initialAlerts={alertsWithPlate} />
 </App>

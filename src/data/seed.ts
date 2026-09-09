@@ -1,4 +1,4 @@
-export const v1 = crypto.randomUUID();
+﻿export const v1 = crypto.randomUUID();
 export const v2 = crypto.randomUUID();
 export const v3 = crypto.randomUUID();
 export const v4 = crypto.randomUUID();
@@ -60,8 +60,8 @@ export const fuelLogsData = [
 ];
 
 export const alertsData = [
-  { id: crypto.randomUUID(), vehicleId: v4, type: 'maintenance_due', severity: 'high', details: 'Veiculo agendado para manutencao preventiva de freios', triggeredAt: '2026-08-16T07:00:00.000Z' },
-  { id: crypto.randomUUID(), vehicleId: v2, type: 'low_fuel', severity: 'medium', details: 'Nivel de combustivel abaixo de 50% durante viagem ativa', triggeredAt: '2026-08-16T09:30:00.000Z', resolvedAt: '2026-08-16T10:15:00.000Z' },
-  { id: crypto.randomUUID(), vehicleId: v8, type: 'geofence', severity: 'low', details: 'Veiculo permanece fora da area autorizada ha mais de 72 horas', triggeredAt: '2026-08-15T08:00:00.000Z' },
+  { id: crypto.randomUUID(), vehicleId: v4, type: 'maintenance_due', severity: 'high', details: 'Veículo agendado para manutenção preventiva de freios', triggeredAt: '2026-08-16T07:00:00.000Z' },
+  { id: crypto.randomUUID(), vehicleId: v2, type: 'low_fuel', severity: 'medium', details: 'Nível de combustível abaixo de 50% durante viagem ativa', triggeredAt: '2026-08-16T09:30:00.000Z', resolvedAt: '2026-08-16T10:15:00.000Z' },
+  { id: crypto.randomUUID(), vehicleId: v8, type: 'geofence', severity: 'low', details: 'Veículo permanece fora da área autorizada ha mais de 72 horas', triggeredAt: '2026-08-15T08:00:00.000Z' },
   { id: crypto.randomUUID(), vehicleId: v7, type: 'speeding', severity: 'critical', details: 'Excesso de velocidade detectado na BR-116, velocidade 95 km/h', triggeredAt: '2026-08-16T08:45:00.000Z', resolvedAt: '2026-08-16T09:00:00.000Z' },
 ];

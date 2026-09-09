@@ -7,9 +7,9 @@ export const ROLE_LABELS: Record<Role, string> = {
 };
 
 export const ROLE_DESCRIPTIONS: Record<Role, string> = {
-  admin: 'Acesso total ao sistema, gestao de usuarios e configuracoes',
-  manager: 'Gestao de frota, manutencao, combustivel e relatorios',
-  driver: 'Acesso apenas as suas viagens, inspecoes e score de seguranca',
+  admin: 'Acesso total ao sistema, gestão de usuários e configurações',
+  manager: 'Gestão de frota, manutenção, combustível e relatórios',
+  driver: 'Acesso apenas às suas viagens, inspeções e score de segurança',
 };
 
 export const ROLE_PERMISSIONS: Record<Role, string[]> = {

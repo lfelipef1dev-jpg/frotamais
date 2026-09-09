@@ -30,16 +30,16 @@ const vrpVehicles = vehicles
 
 const depot = {
   id: 'depot-sp',
-  name: 'Deposito - Sao Paulo',
+  name: 'Depósito - São Paulo',
   lat: -23.5505,
   lng: -46.6333,
 };
 ---
 
 <App title="Rotas">
-  <h2 class="text-xl font-bold text-brand-text mb-6">Roteirizacao e viagens</h2>
+  <h2 class="text-2xl font-extrabold text-brand-text mb-6">Roteirização e viagens</h2>
 
-  <div class="bg-brand-surface rounded-xl p-6 border border-brand-border mb-6">
+  <div class="bg-white rounded-2xl p-6 border border-brand-border shadow-sm mb-6">
     <RoutePlanner
       client:only="react"
       stops={vrpStops}
@@ -48,31 +48,31 @@ const depot = {
     />
   </div>
 
-  <div class="bg-brand-surface rounded-xl border border-brand-border overflow-x-auto">
+  <div class="bg-white rounded-2xl border border-brand-border shadow-sm overflow-x-auto">
     <table class="min-w-full text-sm">
       <thead>
         <tr class="text-left text-brand-text-secondary border-b border-brand-border bg-brand-bg">
-          <th class="px-6 py-3 font-medium">Origem</th>
-          <th class="px-6 py-3 font-medium">Destino</th>
-          <th class="px-6 py-3 font-medium">Veiculo</th>
-          <th class="px-6 py-3 font-medium">Motorista</th>
-          <th class="px-6 py-3 font-medium">Status</th>
-          <th class="px-6 py-3 font-medium">Distancia</th>
+          <th class="px-6 py-3.5 font-semibold">Origem</th>
+          <th class="px-6 py-3.5 font-semibold">Destino</th>
+          <th class="px-6 py-3.5 font-semibold">Veículo</th>
+          <th class="px-6 py-3.5 font-semibold">Motorista</th>
+          <th class="px-6 py-3.5 font-semibold">Status</th>
+          <th class="px-6 py-3.5 font-semibold">Distância</th>
         </tr>
       </thead>
       <tbody>
         {trips.map((t) => (
-          <tr class="border-b border-brand-border last:border-0">
-            <td class="px-6 py-3 text-brand-text-secondary">{t.startAddress}</td>
-            <td class="px-6 py-3 text-brand-text-secondary">{t.endAddress}</td>
-            <td class="px-6 py-3 font-medium text-brand-text">{vehiclesById[t.vehicleId]?.plate}</td>
-            <td class="px-6 py-3 text-brand-text-secondary">{driversById[t.driverId]?.name}</td>
-            <td class="px-6 py-3">
-              <span class={`inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold ${t.status === 'completed' ? 'bg-green-100 text-green-700' : t.status === 'in_progress' ? 'bg-blue-100 text-blue-700' : t.status === 'cancelled' ? 'bg-red-100 text-red-700' : 'bg-slate-100 text-slate-700'}`}>
-                {t.status === 'completed' ? 'Concluida' : t.status === 'in_progress' ? 'Em andamento' : t.status === 'cancelled' ? 'Cancelada' : 'Agendada'}
+          <tr class="border-b border-brand-border last:border-0 hover:bg-brand-bg/30 transition">
+            <td class="px-6 py-3.5 text-brand-text-secondary">{t.startAddress}</td>
+            <td class="px-6 py-3.5 text-brand-text-secondary">{t.endAddress}</td>
+            <td class="px-6 py-3.5 font-semibold text-brand-text">{vehiclesById[t.vehicleId]?.plate}</td>
+            <td class="px-6 py-3.5 text-brand-text-secondary">{driversById[t.driverId]?.name}</td>
+            <td class="px-6 py-3.5">
+              <span class={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold ${t.status === 'completed' ? 'bg-green-100 text-green-700' : t.status === 'in_progress' ? 'bg-blue-100 text-blue-700' : t.status === 'cancelled' ? 'bg-red-100 text-red-700' : 'bg-slate-100 text-slate-700'}`}>
+                {t.status === 'completed' ? 'Concluída' : t.status === 'in_progress' ? 'Em andamento' : t.status === 'cancelled' ? 'Cancelada' : 'Agendada'}
               </span>
             </td>
-            <td class="px-6 py-3 text-brand-text-secondary">{t.distanceKm ? `${t.distanceKm} km` : '-'}</td>
+            <td class="px-6 py-3.5 text-brand-text-secondary">{t.distanceKm ? `${t.distanceKm} km` : '-'}</td>
           </tr>
         ))}
       </tbody>

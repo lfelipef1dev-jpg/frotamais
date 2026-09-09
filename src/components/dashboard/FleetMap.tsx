@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+﻿import { useEffect, useRef } from 'react';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 
@@ -95,8 +95,8 @@ export default function FleetMap({
           <hr style="margin: 6px 0; border: none; border-top: 1px solid #eee;">
           <div style="font-size: 12px;">
             <div>Status: <strong>${vehicle.status}</strong></div>
-            <div>Combustivel: <strong>${vehicle.fuelLevel}%</strong></div>
-            <div>Odometro: <strong>${vehicle.currentOdometer.toLocaleString('pt-BR')} km</strong></div>
+            <div>Combustível: <strong>${vehicle.fuelLevel}%</strong></div>
+            <div>Odômetro: <strong>${vehicle.currentOdometer.toLocaleString('pt-BR')} km</strong></div>
           </div>
         </div>
       `);

@@ -11,29 +11,29 @@ const vehicles = await getVehicles(db);
 const vehiclesById = Object.fromEntries(vehicles.map((v) => [v.id, v]));
 ---
 
-<App title="Manutencao">
-  <h2 class="text-xl font-bold text-brand-text mb-6">Manutencao preventiva</h2>
-  <div class="bg-brand-surface rounded-xl border border-brand-border overflow-x-auto">
+<App title="Manutenção">
+  <h2 class="text-2xl font-extrabold text-brand-text mb-6">Manutenção preventiva</h2>
+  <div class="bg-white rounded-2xl border border-brand-border shadow-sm overflow-x-auto">
     <table class="min-w-full text-sm">
       <thead>
         <tr class="text-left text-brand-text-secondary border-b border-brand-border bg-brand-bg">
-          <th class="px-6 py-3 font-medium">Veiculo</th>
-          <th class="px-6 py-3 font-medium">Servico</th>
-          <th class="px-6 py-3 font-medium">Data</th>
-          <th class="px-6 py-3 font-medium">Custo</th>
-          <th class="px-6 py-3 font-medium">Proximo km</th>
-          <th class="px-6 py-3 font-medium">Proxima data</th>
+          <th class="px-6 py-3.5 font-semibold">Veículo</th>
+          <th class="px-6 py-3.5 font-semibold">Serviço</th>
+          <th class="px-6 py-3.5 font-semibold">Data</th>
+          <th class="px-6 py-3.5 font-semibold">Custo</th>
+          <th class="px-6 py-3.5 font-semibold">Próximo km</th>
+          <th class="px-6 py-3.5 font-semibold">Próxima data</th>
         </tr>
       </thead>
       <tbody>
         {maintenance.map((m) => (
-          <tr class="border-b border-brand-border last:border-0">
-            <td class="px-6 py-3 font-medium text-brand-text">{vehiclesById[m.vehicleId]?.plate}</td>
-            <td class="px-6 py-3 text-brand-text-secondary">{m.description}</td>
-            <td class="px-6 py-3 text-brand-text-secondary">{new Date(m.performedAt).toLocaleDateString('pt-BR')}</td>
-            <td class="px-6 py-3 text-brand-text-secondary">R$ {m.cost?.toFixed(2)}</td>
-            <td class="px-6 py-3 text-brand-text-secondary">{m.nextDueKm?.toLocaleString('pt-BR') ?? '-'}</td>
-            <td class="px-6 py-3 text-brand-text-secondary">{m.nextDueDate ? new Date(m.nextDueDate).toLocaleDateString('pt-BR') : '-'}</td>
+          <tr class="border-b border-brand-border last:border-0 hover:bg-brand-bg/30 transition">
+            <td class="px-6 py-3.5 font-semibold text-brand-text">{vehiclesById[m.vehicleId]?.plate}</td>
+            <td class="px-6 py-3.5 text-brand-text-secondary">{m.description}</td>
+            <td class="px-6 py-3.5 text-brand-text-secondary">{new Date(m.performedAt).toLocaleDateString('pt-BR')}</td>
+            <td class="px-6 py-3.5 text-brand-text-secondary">R$ {m.cost?.toFixed(2)}</td>
+            <td class="px-6 py-3.5 text-brand-text-secondary">{m.nextDueKm?.toLocaleString('pt-BR') ?? '-'}</td>
+            <td class="px-6 py-3.5 text-brand-text-secondary">{m.nextDueDate ? new Date(m.nextDueDate).toLocaleDateString('pt-BR') : '-'}</td>
           </tr>
         ))}
       </tbody>

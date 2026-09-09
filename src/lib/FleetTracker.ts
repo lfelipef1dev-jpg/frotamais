@@ -1,4 +1,4 @@
-import { DurableObject } from 'cloudflare:workers';
+﻿import { DurableObject } from 'cloudflare:workers';
 
 interface VehiclePosition {
   id: string;
@@ -109,7 +109,7 @@ export class FleetTracker extends DurableObject {
         vehicleId: update.id,
         type: 'speeding',
         severity: update.speed > 120 ? 'critical' : 'high',
-        message: `Veiculo ${update.id} acima do limite: ${Math.round(update.speed)} km/h`,
+        message: `Veículo ${update.id} acima do limite: ${Math.round(update.speed)} km/h`,
         timestamp: Date.now(),
       };
       this.alerts.push(alert);

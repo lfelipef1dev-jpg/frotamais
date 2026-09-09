@@ -52,23 +52,23 @@ const safetyByDriver = drivers.map((d) => {
 
 // Fleet status distribution
 const statusData = [
-  { label: 'Disponivel', value: vehicles.filter((v) => v.status === 'available').length, color: '#22C55E' },
+  { label: 'Disponível', value: vehicles.filter((v) => v.status === 'available').length, color: '#22C55E' },
   { label: 'Em rota', value: vehicles.filter((v) => v.status === 'in_use').length, color: '#3B82F6' },
-  { label: 'Manutencao', value: vehicles.filter((v) => v.status === 'maintenance').length, color: '#F97316' },
-  { label: 'Indisponivel', value: vehicles.filter((v) => v.status === 'unavailable').length, color: '#EF4444' },
+  { label: 'Manutenção', value: vehicles.filter((v) => v.status === 'maintenance').length, color: '#F97316' },
+  { label: 'Indisponível', value: vehicles.filter((v) => v.status === 'unavailable').length, color: '#EF4444' },
 ];
 
 // Alert severity distribution
 const alertData = [
-  { label: 'Critico', value: alerts.filter((a) => a.severity === 'critical').length, color: '#EF4444' },
+  { label: 'Crítico', value: alerts.filter((a) => a.severity === 'critical').length, color: '#EF4444' },
   { label: 'Alto', value: alerts.filter((a) => a.severity === 'high').length, color: '#F97316' },
-  { label: 'Medio', value: alerts.filter((a) => a.severity === 'medium').length, color: '#EAB308' },
+  { label: 'Médio', value: alerts.filter((a) => a.severity === 'medium').length, color: '#EAB308' },
   { label: 'Baixo', value: alerts.filter((a) => a.severity === 'low').length, color: '#6B7280' },
 ];
 
 // Trip status distribution
 const tripData = [
-  { label: 'Concluidas', value: trips.filter((t) => t.status === 'completed').length, color: '#22C55E' },
+  { label: 'Concluídas', value: trips.filter((t) => t.status === 'completed').length, color: '#22C55E' },
   { label: 'Em andamento', value: trips.filter((t) => t.status === 'in_progress').length, color: '#3B82F6' },
   { label: 'Agendadas', value: trips.filter((t) => t.status === 'scheduled').length, color: '#EAB308' },
   { label: 'Canceladas', value: trips.filter((t) => t.status === 'cancelled').length, color: '#EF4444' },
@@ -89,60 +89,60 @@ const avgSafetyScore = drivers.length > 0
   : 0;
 ---
 
-<App title="Relatorios">
-  <h2 class="text-xl font-bold text-brand-text mb-2">Relatorios e analytics</h2>
+<App title="Relatórios">
+  <h2 class="text-2xl font-extrabold text-brand-text mb-2">Relatórios e analytics</h2>
   <p class="text-sm text-brand-text-secondary mb-6">Dados consolidados da frota em tempo real, lidos do banco D1.</p>
 
-  <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-    <div class="bg-brand-surface rounded-xl p-5 border border-brand-border">
-      <p class="text-sm text-brand-text-secondary">Custo total combustivel</p>
-      <p class="text-2xl font-extrabold text-brand-text mt-1">R$ {totalFuelCost.toFixed(2)}</p>
+  <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
+    <div class="bg-white rounded-2xl p-5 border border-brand-border shadow-sm">
+      <p class="text-sm text-brand-text-secondary font-medium">Custo total combustível</p>
+      <p class="text-2xl font-extrabold text-brand-text mt-2">R$ {totalFuelCost.toFixed(2)}</p>
     </div>
-    <div class="bg-brand-surface rounded-xl p-5 border border-brand-border">
-      <p class="text-sm text-brand-text-secondary">Custo total manutencao</p>
-      <p class="text-2xl font-extrabold text-brand-text mt-1">R$ {totalMaintenanceCost.toFixed(2)}</p>
+    <div class="bg-white rounded-2xl p-5 border border-brand-border shadow-sm">
+      <p class="text-sm text-brand-text-secondary font-medium">Custo total manutenção</p>
+      <p class="text-2xl font-extrabold text-brand-text mt-2">R$ {totalMaintenanceCost.toFixed(2)}</p>
     </div>
-    <div class="bg-brand-surface rounded-xl p-5 border border-brand-border">
-      <p class="text-sm text-brand-text-secondary">Km total da frota</p>
-      <p class="text-2xl font-extrabold text-brand-text mt-1">{totalKm.toLocaleString('pt-BR')}</p>
+    <div class="bg-white rounded-2xl p-5 border border-brand-border shadow-sm">
+      <p class="text-sm text-brand-text-secondary font-medium">Km total da frota</p>
+      <p class="text-2xl font-extrabold text-brand-text mt-2">{totalKm.toLocaleString('pt-BR')}</p>
     </div>
-    <div class="bg-brand-surface rounded-xl p-5 border border-brand-border">
-      <p class="text-sm text-brand-text-secondary">Score medio frota</p>
-      <p class="text-2xl font-extrabold text-brand-text mt-1">{avgSafetyScore}/100</p>
+    <div class="bg-white rounded-2xl p-5 border border-brand-border shadow-sm">
+      <p class="text-sm text-brand-text-secondary font-medium">Score médio frota</p>
+      <p class="text-2xl font-extrabold text-brand-text mt-2">{avgSafetyScore}/100</p>
     </div>
   </div>
 
   <div class="flex flex-wrap gap-3 mb-8">
-    <a href="/api/reports/fuel-csv" class="inline-flex items-center gap-2 px-4 py-2 bg-brand-surface border border-brand-border rounded-lg text-sm font-medium text-brand-text hover:bg-brand-elevated transition min-h-12">
+    <a href="/api/reports/fuel-csv" class="inline-flex items-center gap-2 px-4 py-2.5 bg-white border border-brand-border rounded-lg text-sm font-medium text-brand-text hover:bg-brand-bg transition min-h-12">
       <svg class="w-4 h-4" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
-      Exportar combustivel (CSV)
+      Exportar combustível (CSV)
     </a>
-    <a href="/api/reports/maintenance-csv" class="inline-flex items-center gap-2 px-4 py-2 bg-brand-surface border border-brand-border rounded-lg text-sm font-medium text-brand-text hover:bg-brand-elevated transition min-h-12">
+    <a href="/api/reports/maintenance-csv" class="inline-flex items-center gap-2 px-4 py-2.5 bg-white border border-brand-border rounded-lg text-sm font-medium text-brand-text hover:bg-brand-bg transition min-h-12">
       <svg class="w-4 h-4" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
-      Exportar manutencao (CSV)
+      Exportar manutenção (CSV)
     </a>
-    <a href="/api/reports/trips-csv" class="inline-flex items-center gap-2 px-4 py-2 bg-brand-surface border border-brand-border rounded-lg text-sm font-medium text-brand-text hover:bg-brand-elevated transition min-h-12">
+    <a href="/api/reports/trips-csv" class="inline-flex items-center gap-2 px-4 py-2.5 bg-white border border-brand-border rounded-lg text-sm font-medium text-brand-text hover:bg-brand-bg transition min-h-12">
       <svg class="w-4 h-4" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
       Exportar viagens (CSV)
     </a>
   </div>
 
   <div class="grid lg:grid-cols-2 gap-6 mb-6">
-    <DonutChart client:only="react" data={statusData} title="Status da frota" centerValue={String(vehicles.length)} centerLabel="veiculos" />
-    <DonutChart client:only="react" data={alertData} title="Distribuicao de alertas" centerValue={String(alerts.length)} centerLabel="alertas" />
+    <DonutChart client:only="react" data={statusData} title="Status da frota" centerValue={String(vehicles.length)} centerLabel="veículos" />
+    <DonutChart client:only="react" data={alertData} title="Distribuição de alertas" centerValue={String(alerts.length)} centerLabel="alertas" />
   </div>
 
   <div class="grid lg:grid-cols-2 gap-6 mb-6">
     <DonutChart client:only="react" data={tripData} title="Status das viagens" centerValue={String(trips.length)} centerLabel="viagens" />
-    <DonutChart client:only="react" data={inspectionData} title="Status das inspecoes" centerValue={String(inspections.length)} centerLabel="inspecoes" />
+    <DonutChart client:only="react" data={inspectionData} title="Status das inspeções" centerValue={String(inspections.length)} centerLabel="inspeções" />
   </div>
 
   <div class="grid lg:grid-cols-2 gap-6 mb-6">
-    <BarChart client:only="react" data={fuelByVehicle} title="Consumo de combustivel por veiculo (L)" unit="L" />
-    <BarChart client:only="react" data={maintenanceByVehicle} title="Custo de manutencao por veiculo (R$)" unit="R$" />
+    <BarChart client:only="react" data={fuelByVehicle} title="Consumo de combustível por veículo (L)" unit="L" />
+    <BarChart client:only="react" data={maintenanceByVehicle} title="Custo de manutenção por veículo (R$)" unit="R$" />
   </div>
 
   <div class="grid lg:grid-cols-1 gap-6">
-    <BarChart client:only="react" data={safetyByDriver} title="Score de seguranca por motorista" />
+    <BarChart client:only="react" data={safetyByDriver} title="Score de segurança por motorista" />
   </div>
 </App>

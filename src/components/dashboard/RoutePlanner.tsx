@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+﻿import { useEffect, useRef, useState } from 'react';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import {
@@ -130,7 +130,7 @@ export default function RoutePlanner({ stops, vehicles, depot }: RoutePlannerPro
 
         L.marker([loc.lat, loc.lng], { icon })
           .addTo(map)
-          .bindPopup(`<strong>${loc.name || loc.id}</strong><br>${isStart ? 'Inicio' : isEnd ? 'Fim' : `Parada ${i}`}`);
+          .bindPopup(`<strong>${loc.name || loc.id}</strong><br>${isStart ? 'Início' : isEnd ? 'Fim' : `Parada ${i}`}`);
       });
 
       if (coords.length > 0) {
@@ -144,9 +144,9 @@ export default function RoutePlanner({ stops, vehicles, depot }: RoutePlannerPro
     <div className="space-y-4">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div>
-          <h3 className="font-bold text-brand-text">Roteirizacao VRP</h3>
+          <h3 className="font-bold text-brand-text">Roteirização VRP</h3>
           <p className="text-sm text-brand-text-secondary">
-            Algoritmo Nearest Neighbor + refinamento 2-opt. Distancias haversine reais.
+            Algoritmo Nearest Neighbor + refinamento 2-opt. Distâncias haversine reais.
           </p>
         </div>
         <button
@@ -167,7 +167,7 @@ export default function RoutePlanner({ stops, vehicles, depot }: RoutePlannerPro
 
       {result && (
         <div className="bg-brand-surface border border-brand-border rounded-lg p-4">
-          <h4 className="font-semibold text-brand-text mb-3">Resultado da roteirizacao</h4>
+          <h4 className="font-semibold text-brand-text mb-3">Resultado da roteirização</h4>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
             {result.routes.map((r, i) => (
               <div key={r.vehicle.id} className="border border-brand-border rounded-lg p-3">
@@ -189,7 +189,7 @@ export default function RoutePlanner({ stops, vehicles, depot }: RoutePlannerPro
             ))}
           </div>
           <p className="mt-3 text-sm font-semibold text-brand-text">
-            Distancia total da frota: {result.totalDistanceKm.toFixed(1)} km
+            Distância total da frota: {result.totalDistanceKm.toFixed(1)} km
           </p>
         </div>
       )}

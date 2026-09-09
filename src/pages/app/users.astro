@@ -1,4 +1,4 @@
----
+﻿---
 import App from '../../layouts/App.astro';
 import { getDb } from '../../db/client';
 import { getUsers } from '../../db/queries';
@@ -11,9 +11,9 @@ const users = await getUsers(db);
 const currentUser = Astro.locals.user;
 ---
 
-<App title="Usuarios">
-  <h2 class="text-xl font-bold text-brand-text mb-2">Gestao de usuarios</h2>
-  <p class="text-sm text-brand-text-secondary mb-6">Controle de acessos e permissoes do sistema.</p>
+<App title="Usuários">
+  <h2 class="text-xl font-bold text-brand-text mb-2">Gestão de usuários</h2>
+  <p class="text-sm text-brand-text-secondary mb-6">Controle de acessos e permissões do sistema.</p>
 
   <div class="grid md:grid-cols-3 gap-4 mb-8">
     {Object.entries(ROLE_LABELS).map(([key, label]) => (
@@ -48,7 +48,7 @@ const currentUser = Astro.locals.user;
             <td class="px-6 py-3 text-brand-text-secondary">{u.createdAt ? new Date(u.createdAt).toLocaleDateString('pt-BR') : '-'}</td>
             <td class="px-6 py-3">
               {currentUser?.id === u.id ? (
-                <span class="text-xs font-semibold text-brand-accent">Voce</span>
+                <span class="text-xs font-semibold text-brand-accent">Você</span>
               ) : (
                 <span class="text-xs text-brand-text-light">-</span>
               )}
@@ -57,7 +57,7 @@ const currentUser = Astro.locals.user;
         ))}
         {users.length === 0 && (
           <tr>
-            <td colspan="5" class="px-6 py-8 text-center text-brand-text-secondary">Nenhum usuario cadastrado.</td>
+            <td colspan="5" class="px-6 py-8 text-center text-brand-text-secondary">Nenhum usuário cadastrado.</td>
           </tr>
         )}
       </tbody>

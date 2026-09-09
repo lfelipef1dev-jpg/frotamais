@@ -13,47 +13,47 @@ const totalLiters = fuelLogs.reduce((acc, f) => acc + f.liters, 0);
 const totalCost = fuelLogs.reduce((acc, f) => acc + f.cost, 0);
 ---
 
-<App title="Combustivel">
-  <h2 class="text-xl font-bold text-brand-text mb-6">Controle de combustivel</h2>
-  <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-    <div class="bg-brand-surface rounded-xl p-5 border border-brand-border">
-      <p class="text-sm text-brand-text-secondary">Total abastecido</p>
-      <p class="text-2xl font-extrabold text-brand-text mt-1">{totalLiters.toFixed(1)} L</p>
+<App title="Combustível">
+  <h2 class="text-2xl font-extrabold text-brand-text mb-6">Controle de combustível</h2>
+  <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
+    <div class="bg-white rounded-2xl p-5 border border-brand-border shadow-sm">
+      <p class="text-sm text-brand-text-secondary font-medium">Total abastecido</p>
+      <p class="text-2xl font-extrabold text-brand-text mt-2">{totalLiters.toFixed(1)} L</p>
     </div>
-    <div class="bg-brand-surface rounded-xl p-5 border border-brand-border">
-      <p class="text-sm text-brand-text-secondary">Gasto total</p>
-      <p class="text-2xl font-extrabold text-brand-text mt-1">R$ {totalCost.toFixed(2)}</p>
+    <div class="bg-white rounded-2xl p-5 border border-brand-border shadow-sm">
+      <p class="text-sm text-brand-text-secondary font-medium">Gasto total</p>
+      <p class="text-2xl font-extrabold text-brand-text mt-2">R$ {totalCost.toFixed(2)}</p>
     </div>
-    <div class="bg-brand-surface rounded-xl p-5 border border-brand-border">
-      <p class="text-sm text-brand-text-secondary">Preco medio/litro</p>
-      <p class="text-2xl font-extrabold text-brand-text mt-1">R$ {totalLiters > 0 ? (totalCost / totalLiters).toFixed(2) : '0,00'}</p>
+    <div class="bg-white rounded-2xl p-5 border border-brand-border shadow-sm">
+      <p class="text-sm text-brand-text-secondary font-medium">Preço médio/litro</p>
+      <p class="text-2xl font-extrabold text-brand-text mt-2">R$ {totalLiters > 0 ? (totalCost / totalLiters).toFixed(2) : '0,00'}</p>
     </div>
-    <div class="bg-brand-surface rounded-xl p-5 border border-brand-border">
-      <p class="text-sm text-brand-text-secondary">Registros</p>
-      <p class="text-2xl font-extrabold text-brand-text mt-1">{fuelLogs.length}</p>
+    <div class="bg-white rounded-2xl p-5 border border-brand-border shadow-sm">
+      <p class="text-sm text-brand-text-secondary font-medium">Registros</p>
+      <p class="text-2xl font-extrabold text-brand-text mt-2">{fuelLogs.length}</p>
     </div>
   </div>
-  <div class="bg-brand-surface rounded-xl border border-brand-border overflow-x-auto">
+  <div class="bg-white rounded-2xl border border-brand-border shadow-sm overflow-x-auto">
     <table class="min-w-full text-sm">
       <thead>
         <tr class="text-left text-brand-text-secondary border-b border-brand-border bg-brand-bg">
-          <th class="px-6 py-3 font-medium">Data</th>
-          <th class="px-6 py-3 font-medium">Veiculo</th>
-          <th class="px-6 py-3 font-medium">Quilometragem</th>
-          <th class="px-6 py-3 font-medium">Litros</th>
-          <th class="px-6 py-3 font-medium">Custo</th>
-          <th class="px-6 py-3 font-medium">Posto</th>
+          <th class="px-6 py-3.5 font-semibold">Data</th>
+          <th class="px-6 py-3.5 font-semibold">Veículo</th>
+          <th class="px-6 py-3.5 font-semibold">Quilometragem</th>
+          <th class="px-6 py-3.5 font-semibold">Litros</th>
+          <th class="px-6 py-3.5 font-semibold">Custo</th>
+          <th class="px-6 py-3.5 font-semibold">Posto</th>
         </tr>
       </thead>
       <tbody>
         {fuelLogs.map((f) => (
-          <tr class="border-b border-brand-border last:border-0">
-            <td class="px-6 py-3 text-brand-text-secondary">{new Date(f.date).toLocaleString('pt-BR')}</td>
-            <td class="px-6 py-3 font-medium text-brand-text">{vehiclesById[f.vehicleId]?.plate}</td>
-            <td class="px-6 py-3 text-brand-text-secondary">{f.odometer.toLocaleString('pt-BR')} km</td>
-            <td class="px-6 py-3 text-brand-text-secondary">{f.liters} L</td>
-            <td class="px-6 py-3 text-brand-text-secondary">R$ {f.cost.toFixed(2)}</td>
-            <td class="px-6 py-3 text-brand-text-secondary">{f.station}</td>
+          <tr class="border-b border-brand-border last:border-0 hover:bg-brand-bg/30 transition">
+            <td class="px-6 py-3.5 text-brand-text-secondary">{new Date(f.date).toLocaleString('pt-BR')}</td>
+            <td class="px-6 py-3.5 font-semibold text-brand-text">{vehiclesById[f.vehicleId]?.plate}</td>
+            <td class="px-6 py-3.5 text-brand-text-secondary">{f.odometer.toLocaleString('pt-BR')} km</td>
+            <td class="px-6 py-3.5 text-brand-text-secondary">{f.liters} L</td>
+            <td class="px-6 py-3.5 text-brand-text-secondary">R$ {f.cost.toFixed(2)}</td>
+            <td class="px-6 py-3.5 text-brand-text-secondary">{f.station}</td>
           </tr>
         ))}
       </tbody>
