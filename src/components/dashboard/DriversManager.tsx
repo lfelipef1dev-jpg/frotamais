@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Plus, Search, Trash2, User } from 'lucide-react';
+import { Plus, Search, Trash2, Pencil, User } from 'lucide-react';
 import CrudModal from './CrudModal';
 
 interface Driver {
@@ -15,10 +15,21 @@ interface Driver {
   calculatedScore?: number;
 }
 
+const DRIVER_FIELDS = [
+  { name: 'name', label: 'Nome completo', type: 'text' as const, required: true },
+  { name: 'licenseNumber', label: 'CNH', type: 'text' as const, required: true },
+  { name: 'licenseExpiry', label: 'Validade da CNH', type: 'date' as const, required: true },
+  { name: 'phone', label: 'Telefone', type: 'text' as const, required: true },
+  { name: 'status', label: 'Status', type: 'select' as const, required: true, options: [
+    { value: 'active', label: 'Ativo' }, { value: 'inactive', label: 'Inativo' },
+  ]},
+];
+
 export default function DriversManager({ initialDrivers }: { initialDrivers: Driver[] }) {
   const [drivers, setDrivers] = useState(initialDrivers);
   const [search, setSearch] = useState('');
   const [modalOpen, setModalOpen] = useState(false);
+  const [editing, setEditing] = useState<Driver | null>(null);
   const [deleteId, setDeleteId] = useState<string | null>(null);
 
   const filtered = drivers.filter((d) => {
@@ -27,9 +38,10 @@ export default function DriversManager({ initialDrivers }: { initialDrivers: Dri
     return true;
   });
 
-  const addDriver = async (data: Record<string, any>) => {
-    const res = await fetch('/api/drivers', {
-      method: 'POST',
+  const saveDriver = async (data: Record<string, any>) => {
+    const url = editing ? `/api/drivers/${editing.id}` : '/api/drivers';
+    const res = await fetch(url, {
+      method: editing ? 'PUT' : 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data),
     });
@@ -63,7 +75,7 @@ export default function DriversManager({ initialDrivers }: { initialDrivers: Dri
           />
         </div>
         <button
-          onClick={() => setModalOpen(true)}
+          onClick={() => { setEditing(null); setModalOpen(true); }}
           className="inline-flex items-center gap-2 px-4 py-2.5 bg-brand-primary text-white rounded-lg text-sm font-semibold hover:bg-brand-primary-600 transition min-h-12 shadow-sm"
         >
           <Plus className="w-4 h-4" aria-hidden="true" />
@@ -85,13 +97,22 @@ export default function DriversManager({ initialDrivers }: { initialDrivers: Dri
                   <a href={`/app/drivers/${d.id}`} className="font-bold text-brand-text hover:text-brand-primary truncate block">{d.name}</a>
                   <p className="text-xs text-brand-text-secondary">{d.phone}</p>
                 </div>
-                <button
-                  onClick={() => setDeleteId(d.id)}
-                  className="text-brand-danger hover:text-red-700 transition p-1"
-                  aria-label={`Remover ${d.name}`}
-                >
-                  <Trash2 className="w-4 h-4" />
-                </button>
+                <div className="flex items-center gap-1">
+                  <button
+                    onClick={() => { setEditing(d); setModalOpen(true); }}
+                    className="text-brand-primary hover:text-brand-primary-600 transition p-1.5 rounded-lg hover:bg-brand-bg"
+                    aria-label={`Editar ${d.name}`}
+                  >
+                    <Pencil className="w-4 h-4" />
+                  </button>
+                  <button
+                    onClick={() => setDeleteId(d.id)}
+                    className="text-brand-danger hover:text-red-700 transition p-1.5 rounded-lg hover:bg-red-50"
+                    aria-label={`Remover ${d.name}`}
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                </div>
               </div>
               <div className="text-sm text-brand-text-secondary space-y-2">
                 <p className="flex justify-between"><span>Score de segurança</span> <span className={`font-bold ${scoreColor(score)}`}>{score}/100</span></p>
@@ -109,18 +130,12 @@ export default function DriversManager({ initialDrivers }: { initialDrivers: Dri
 
       <CrudModal
         open={modalOpen}
-        title="Adicionar motorista"
-        onClose={() => setModalOpen(false)}
-        onSubmit={addDriver}
-        fields={[
-          { name: 'name', label: 'Nome completo', type: 'text', required: true },
-          { name: 'licenseNumber', label: 'CNH', type: 'text', required: true },
-          { name: 'licenseExpiry', label: 'Validade da CNH', type: 'date', required: true },
-          { name: 'phone', label: 'Telefone', type: 'text', required: true },
-          { name: 'status', label: 'Status', type: 'select', required: true, options: [
-            { value: 'active', label: 'Ativo' }, { value: 'inactive', label: 'Inativo' },
-          ]},
-        ]}
+        title={editing ? `Editar ${editing.name}` : 'Adicionar motorista'}
+        submitLabel={editing ? 'Salvar alterações' : 'Salvar'}
+        onClose={() => { setModalOpen(false); setEditing(null); }}
+        onSubmit={saveDriver}
+        initialValues={editing ? { ...editing, licenseExpiry: editing.licenseExpiry?.slice(0, 10) } : undefined}
+        fields={DRIVER_FIELDS}
       />
 
       {deleteId && (

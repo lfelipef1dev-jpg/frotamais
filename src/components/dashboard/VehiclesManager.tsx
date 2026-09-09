@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Plus, Search, Trash2 } from 'lucide-react';
+import { Plus, Search, Trash2, Pencil } from 'lucide-react';
 import CrudModal from './CrudModal';
 
 interface Vehicle {
@@ -17,11 +17,33 @@ interface Vehicle {
   driverName?: string;
 }
 
+const VEHICLE_FIELDS = [
+  { name: 'plate', label: 'Placa', type: 'text' as const, required: true },
+  { name: 'make', label: 'Marca', type: 'text' as const, required: true },
+  { name: 'model', label: 'Modelo', type: 'text' as const, required: true },
+  { name: 'year', label: 'Ano', type: 'number' as const, required: true, defaultValue: 2024 },
+  { name: 'type', label: 'Tipo', type: 'select' as const, required: true, options: [
+    { value: 'car', label: 'Carro' }, { value: 'truck', label: 'Caminhão' },
+    { value: 'van', label: 'Van' }, { value: 'motorcycle', label: 'Moto' },
+  ]},
+  { name: 'fuelType', label: 'Combustível', type: 'select' as const, required: true, options: [
+    { value: 'gasoline', label: 'Gasolina' }, { value: 'flex', label: 'Flex' },
+    { value: 'diesel', label: 'Diesel' }, { value: 'electric', label: 'Elétrico' },
+  ]},
+  { name: 'status', label: 'Status', type: 'select' as const, required: true, options: [
+    { value: 'available', label: 'Disponível' }, { value: 'in_use', label: 'Em rota' },
+    { value: 'maintenance', label: 'Manutenção' }, { value: 'unavailable', label: 'Indisponível' },
+  ]},
+  { name: 'currentOdometer', label: 'Odômetro (km)', type: 'number' as const, defaultValue: 0 },
+  { name: 'fuelLevel', label: 'Nível de combustível (%)', type: 'number' as const, defaultValue: 100 },
+];
+
 export default function VehiclesManager({ initialVehicles }: { initialVehicles: Vehicle[] }) {
   const [vehicles, setVehicles] = useState(initialVehicles);
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [modalOpen, setModalOpen] = useState(false);
+  const [editing, setEditing] = useState<Vehicle | null>(null);
   const [deleteId, setDeleteId] = useState<string | null>(null);
 
   const filtered = vehicles.filter((v) => {
@@ -31,9 +53,10 @@ export default function VehiclesManager({ initialVehicles }: { initialVehicles: 
     return true;
   });
 
-  const addVehicle = async (data: Record<string, any>) => {
-    const res = await fetch('/api/vehicles', {
-      method: 'POST',
+  const saveVehicle = async (data: Record<string, any>) => {
+    const url = editing ? `/api/vehicles/${editing.id}` : '/api/vehicles';
+    const res = await fetch(url, {
+      method: editing ? 'PUT' : 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data),
     });
@@ -82,7 +105,7 @@ export default function VehiclesManager({ initialVehicles }: { initialVehicles: 
           <option value="unavailable">Indisponível</option>
         </select>
         <button
-          onClick={() => setModalOpen(true)}
+          onClick={() => { setEditing(null); setModalOpen(true); }}
           className="inline-flex items-center gap-2 px-4 py-2.5 bg-brand-primary text-white rounded-lg text-sm font-semibold hover:bg-brand-primary-600 transition min-h-12 shadow-sm"
         >
           <Plus className="w-4 h-4" aria-hidden="true" />
@@ -121,14 +144,24 @@ export default function VehiclesManager({ initialVehicles }: { initialVehicles: 
                 <td className="px-6 py-3.5 text-brand-text-secondary">{v.currentOdometer.toLocaleString('pt-BR')} km</td>
                 <td className="px-6 py-3.5 text-brand-text-secondary">{v.fuelLevel}%</td>
                 <td className="px-6 py-3.5">
-                  <button
-                    onClick={() => setDeleteId(v.id)}
-                    className="inline-flex items-center gap-1 text-xs font-medium text-brand-danger hover:text-red-700 transition"
-                    aria-label={`Remover ${v.plate}`}
-                  >
-                    <Trash2 className="w-3.5 h-3.5" />
-                    Remover
-                  </button>
+                  <div className="flex items-center gap-3">
+                    <button
+                      onClick={() => { setEditing(v); setModalOpen(true); }}
+                      className="inline-flex items-center gap-1 text-xs font-medium text-brand-primary hover:text-brand-primary-600 transition"
+                      aria-label={`Editar ${v.plate}`}
+                    >
+                      <Pencil className="w-3.5 h-3.5" />
+                      Editar
+                    </button>
+                    <button
+                      onClick={() => setDeleteId(v.id)}
+                      className="inline-flex items-center gap-1 text-xs font-medium text-brand-danger hover:text-red-700 transition"
+                      aria-label={`Remover ${v.plate}`}
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                      Remover
+                    </button>
+                  </div>
                 </td>
               </tr>
             ))}
@@ -141,29 +174,12 @@ export default function VehiclesManager({ initialVehicles }: { initialVehicles: 
 
       <CrudModal
         open={modalOpen}
-        title="Adicionar veículo"
-        onClose={() => setModalOpen(false)}
-        onSubmit={addVehicle}
-        fields={[
-          { name: 'plate', label: 'Placa', type: 'text', required: true },
-          { name: 'make', label: 'Marca', type: 'text', required: true },
-          { name: 'model', label: 'Modelo', type: 'text', required: true },
-          { name: 'year', label: 'Ano', type: 'number', required: true, defaultValue: 2024 },
-          { name: 'type', label: 'Tipo', type: 'select', required: true, options: [
-            { value: 'car', label: 'Carro' }, { value: 'truck', label: 'Caminhão' },
-            { value: 'van', label: 'Van' }, { value: 'motorcycle', label: 'Moto' },
-          ]},
-          { name: 'fuelType', label: 'Combustível', type: 'select', required: true, options: [
-            { value: 'gasoline', label: 'Gasolina' }, { value: 'flex', label: 'Flex' },
-            { value: 'diesel', label: 'Diesel' }, { value: 'electric', label: 'Elétrico' },
-          ]},
-          { name: 'status', label: 'Status', type: 'select', required: true, options: [
-            { value: 'available', label: 'Disponível' }, { value: 'in_use', label: 'Em rota' },
-            { value: 'maintenance', label: 'Manutenção' }, { value: 'unavailable', label: 'Indisponível' },
-          ]},
-          { name: 'currentOdometer', label: 'Odômetro (km)', type: 'number', defaultValue: 0 },
-          { name: 'fuelLevel', label: 'Nível de combustível (%)', type: 'number', defaultValue: 100 },
-        ]}
+        title={editing ? `Editar veículo ${editing.plate}` : 'Adicionar veículo'}
+        submitLabel={editing ? 'Salvar alterações' : 'Salvar'}
+        onClose={() => { setModalOpen(false); setEditing(null); }}
+        onSubmit={saveVehicle}
+        initialValues={editing ?? undefined}
+        fields={VEHICLE_FIELDS}
       />
 
       {deleteId && (

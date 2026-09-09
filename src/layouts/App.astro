@@ -150,11 +150,14 @@ const isActive = (href: string) => pathname === href || pathname.startsWith(href
           sidebar.classList.add('flex');
           sidebar.classList.remove('-translate-x-full');
           overlay.classList.remove('hidden');
+          const firstLink = sidebar.querySelector('nav a');
+          firstLink && firstLink.focus();
         };
 
         const close = () => {
           sidebar.classList.add('-translate-x-full');
           overlay.classList.add('hidden');
+          btn.focus();
           setTimeout(() => {
             sidebar.classList.add('hidden', 'md:flex');
             sidebar.classList.remove('flex');
@@ -163,6 +166,9 @@ const isActive = (href: string) => pathname === href || pathname.startsWith(href
 
         btn.addEventListener('click', open);
         overlay.addEventListener('click', close);
+        document.addEventListener('keydown', (e) => {
+          if (e.key === 'Escape' && !overlay.classList.contains('hidden')) close();
+        });
       })();
     </script>
   </body>
