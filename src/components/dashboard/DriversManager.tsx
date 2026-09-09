@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Plus, Search, Trash2, User } from 'lucide-react';
 import CrudModal from './CrudModal';
 
 interface Driver {
@@ -42,53 +43,67 @@ export default function DriversManager({ initialDrivers }: { initialDrivers: Dri
     setDeleteId(null);
   };
 
+  const scoreColor = (score: number) => {
+    if (score >= 80) return 'text-brand-accent';
+    if (score >= 50) return 'text-brand-warning';
+    return 'text-brand-danger';
+  };
+
   return (
     <div>
       <div className="flex flex-wrap items-center gap-3 mb-6">
-        <input
-          type="text"
-          placeholder="Buscar por nome, telefone ou CNH..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="flex-1 min-w-48 rounded-lg border border-brand-border bg-brand-surface px-3 py-2 text-sm text-brand-text focus-visible:ring-2 focus-visible:ring-brand-accent outline-none"
-        />
+        <div className="relative flex-1 min-w-48">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-brand-text-light" aria-hidden="true" />
+          <input
+            type="text"
+            placeholder="Buscar por nome, telefone ou CNH..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="w-full rounded-lg border border-brand-border bg-white pl-9 pr-3 py-2.5 text-sm text-brand-text focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:border-brand-primary outline-none transition"
+          />
+        </div>
         <button
           onClick={() => setModalOpen(true)}
-          className="inline-flex items-center gap-2 px-4 py-2 bg-brand-primary text-white rounded-lg text-sm font-semibold hover:bg-brand-primary-600 transition min-h-12"
+          className="inline-flex items-center gap-2 px-4 py-2.5 bg-brand-primary text-white rounded-lg text-sm font-semibold hover:bg-brand-primary-600 transition min-h-12 shadow-sm"
         >
-          <svg className="w-4 h-4" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" /></svg>
+          <Plus className="w-4 h-4" aria-hidden="true" />
           Adicionar motorista
         </button>
       </div>
 
-      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {filtered.map((d) => (
-          <div key={d.id} className="bg-brand-surface rounded-xl p-5 border border-brand-border hover:border-brand-primary transition">
-            <div className="flex items-center gap-3 mb-3">
-              <div className="w-10 h-10 rounded-full bg-brand-primary/10 text-brand-primary flex items-center justify-center font-bold">
-                {d.name.split(' ').map((n) => n[0]).slice(0, 2).join('')}
+      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {filtered.map((d) => {
+          const initials = d.name.split(' ').map((n) => n[0]).slice(0, 2).join('').toUpperCase();
+          const score = d.calculatedScore ?? d.safetyScore;
+          return (
+            <div key={d.id} className="bg-white rounded-2xl p-5 border border-brand-border hover:border-brand-primary hover:shadow-md transition duration-300">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-brand-primary to-brand-primary-600 text-white flex items-center justify-center font-bold text-sm shadow-sm">
+                  {initials || <User className="w-5 h-5" />}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <a href={`/app/drivers/${d.id}`} className="font-bold text-brand-text hover:text-brand-primary truncate block">{d.name}</a>
+                  <p className="text-xs text-brand-text-secondary">{d.phone}</p>
+                </div>
+                <button
+                  onClick={() => setDeleteId(d.id)}
+                  className="text-brand-danger hover:text-red-700 transition p-1"
+                  aria-label={`Remover ${d.name}`}
+                >
+                  <Trash2 className="w-4 h-4" />
+                </button>
               </div>
-              <div className="flex-1">
-                <a href={`/app/drivers/${d.id}`} className="font-bold text-brand-text hover:text-brand-accent">{d.name}</a>
-                <p className="text-xs text-brand-text-secondary">{d.phone}</p>
+              <div className="text-sm text-brand-text-secondary space-y-2">
+                <p className="flex justify-between"><span>Score de segurança</span> <span className={`font-bold ${scoreColor(score)}`}>{score}/100</span></p>
+                <p className="flex justify-between"><span>Viagens</span> <span className="font-semibold text-brand-text">{d.totalTrips}</span></p>
+                <p className="flex justify-between"><span>Km total</span> <span className="font-semibold text-brand-text">{d.totalKm.toLocaleString('pt-BR')} km</span></p>
+                <p className="flex justify-between"><span>CNH válida até</span> <span className="font-semibold text-brand-text">{new Date(d.licenseExpiry).toLocaleDateString('pt-BR')}</span></p>
               </div>
-              <button
-                onClick={() => setDeleteId(d.id)}
-                className="text-xs text-red-400 hover:text-red-300 transition"
-                aria-label={`Remover ${d.name}`}
-              >
-                Remover
-              </button>
             </div>
-            <div className="text-sm text-brand-text-secondary space-y-1">
-              <p>Score: <span className="font-semibold text-brand-text">{d.calculatedScore ?? d.safetyScore}/100</span></p>
-              <p>Viagens: {d.totalTrips} | {d.totalKm.toLocaleString('pt-BR')} km</p>
-              <p>CNH: {new Date(d.licenseExpiry).toLocaleDateString('pt-BR')}</p>
-            </div>
-          </div>
-        ))}
+          );
+        })}
         {filtered.length === 0 && (
-          <p className="col-span-full text-center text-brand-text-secondary py-8">Nenhum motorista encontrado.</p>
+          <p className="col-span-full text-center text-brand-text-secondary py-10">Nenhum motorista encontrado.</p>
         )}
       </div>
 
@@ -100,7 +115,7 @@ export default function DriversManager({ initialDrivers }: { initialDrivers: Dri
         fields={[
           { name: 'name', label: 'Nome completo', type: 'text', required: true },
           { name: 'licenseNumber', label: 'CNH', type: 'text', required: true },
-          { name: 'licenseExpiry', label: 'Validade CNH', type: 'date', required: true },
+          { name: 'licenseExpiry', label: 'Validade da CNH', type: 'date', required: true },
           { name: 'phone', label: 'Telefone', type: 'text', required: true },
           { name: 'status', label: 'Status', type: 'select', required: true, options: [
             { value: 'active', label: 'Ativo' }, { value: 'inactive', label: 'Inativo' },
@@ -109,12 +124,12 @@ export default function DriversManager({ initialDrivers }: { initialDrivers: Dri
       />
 
       {deleteId && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60" onClick={() => setDeleteId(null)}>
-          <div className="bg-brand-surface rounded-xl border border-brand-border p-6 w-full max-w-sm" onClick={(e) => e.stopPropagation()}>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm" onClick={() => setDeleteId(null)}>
+          <div className="bg-white rounded-2xl border border-brand-border p-6 w-full max-w-sm shadow-2xl" onClick={(e) => e.stopPropagation()}>
             <h3 className="font-bold text-lg text-brand-text mb-2">Remover motorista?</h3>
-            <p className="text-sm text-brand-text-secondary mb-4">Esta acao nao pode ser desfeita.</p>
+            <p className="text-sm text-brand-text-secondary mb-5">Esta ação não pode ser desfeita.</p>
             <div className="flex gap-3">
-              <button onClick={() => deleteDriver(deleteId)} className="flex-1 rounded-lg bg-red-500 px-4 py-2.5 font-semibold text-white hover:bg-red-600 transition min-h-12">Remover</button>
+              <button onClick={() => deleteDriver(deleteId)} className="flex-1 rounded-lg bg-brand-danger px-4 py-2.5 font-semibold text-white hover:opacity-90 transition min-h-12">Remover</button>
               <button onClick={() => setDeleteId(null)} className="rounded-lg border border-brand-border px-4 py-2.5 font-medium text-brand-text hover:bg-brand-bg transition min-h-12">Cancelar</button>
             </div>
           </div>

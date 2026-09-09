@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Plus, Search, Trash2 } from 'lucide-react';
 import CrudModal from './CrudModal';
 
 interface Vehicle {
@@ -49,7 +50,7 @@ export default function VehiclesManager({ initialVehicles }: { initialVehicles: 
   };
 
   const statusLabels: Record<string, string> = {
-    in_use: 'Em rota', maintenance: 'Manutencao', unavailable: 'Indisponivel', available: 'Disponivel',
+    in_use: 'Em rota', maintenance: 'Manutenção', unavailable: 'Indisponível', available: 'Disponível',
   };
   const statusColors: Record<string, string> = {
     in_use: 'bg-green-100 text-green-700', maintenance: 'bg-orange-100 text-orange-700',
@@ -59,76 +60,80 @@ export default function VehiclesManager({ initialVehicles }: { initialVehicles: 
   return (
     <div>
       <div className="flex flex-wrap items-center gap-3 mb-6">
-        <input
-          type="text"
-          placeholder="Buscar por placa, marca ou modelo..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="flex-1 min-w-48 rounded-lg border border-brand-border bg-brand-surface px-3 py-2 text-sm text-brand-text focus-visible:ring-2 focus-visible:ring-brand-accent outline-none"
-        />
+        <div className="relative flex-1 min-w-48">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-brand-text-light" aria-hidden="true" />
+          <input
+            type="text"
+            placeholder="Buscar por placa, marca ou modelo..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="w-full rounded-lg border border-brand-border bg-white pl-9 pr-3 py-2.5 text-sm text-brand-text focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:border-brand-primary outline-none transition"
+          />
+        </div>
         <select
           value={statusFilter}
           onChange={(e) => setStatusFilter(e.target.value)}
-          className="rounded-lg border border-brand-border bg-brand-surface px-3 py-2 text-sm text-brand-text focus-visible:ring-2 focus-visible:ring-brand-accent outline-none"
+          className="rounded-lg border border-brand-border bg-white px-3 py-2.5 text-sm text-brand-text focus-visible:ring-2 focus-visible:ring-brand-primary outline-none transition"
         >
           <option value="all">Todos os status</option>
-          <option value="available">Disponivel</option>
+          <option value="available">Disponível</option>
           <option value="in_use">Em rota</option>
-          <option value="maintenance">Manutencao</option>
-          <option value="unavailable">Indisponivel</option>
+          <option value="maintenance">Manutenção</option>
+          <option value="unavailable">Indisponível</option>
         </select>
         <button
           onClick={() => setModalOpen(true)}
-          className="inline-flex items-center gap-2 px-4 py-2 bg-brand-primary text-white rounded-lg text-sm font-semibold hover:bg-brand-primary-600 transition min-h-12"
+          className="inline-flex items-center gap-2 px-4 py-2.5 bg-brand-primary text-white rounded-lg text-sm font-semibold hover:bg-brand-primary-600 transition min-h-12 shadow-sm"
         >
-          <svg className="w-4 h-4" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" /></svg>
-          Adicionar veiculo
+          <Plus className="w-4 h-4" aria-hidden="true" />
+          Adicionar veículo
         </button>
       </div>
 
-      <div className="bg-brand-surface rounded-xl border border-brand-border overflow-x-auto">
+      <div className="bg-white rounded-2xl border border-brand-border overflow-x-auto shadow-sm">
         <table className="min-w-full text-sm">
           <thead>
             <tr className="text-left text-brand-text-secondary border-b border-brand-border bg-brand-bg">
-              <th className="px-6 py-3 font-medium">Placa</th>
-              <th className="px-6 py-3 font-medium">Veiculo</th>
-              <th className="px-6 py-3 font-medium">Ano</th>
-              <th className="px-6 py-3 font-medium">Status</th>
-              <th className="px-6 py-3 font-medium">Motorista</th>
-              <th className="px-6 py-3 font-medium">Km</th>
-              <th className="px-6 py-3 font-medium">Combustivel</th>
-              <th className="px-6 py-3 font-medium">Acoes</th>
+              <th className="px-6 py-3.5 font-semibold">Placa</th>
+              <th className="px-6 py-3.5 font-semibold">Veículo</th>
+              <th className="px-6 py-3.5 font-semibold">Ano</th>
+              <th className="px-6 py-3.5 font-semibold">Status</th>
+              <th className="px-6 py-3.5 font-semibold">Motorista</th>
+              <th className="px-6 py-3.5 font-semibold">Km</th>
+              <th className="px-6 py-3.5 font-semibold">Combustível</th>
+              <th className="px-6 py-3.5 font-semibold">Ações</th>
             </tr>
           </thead>
           <tbody>
             {filtered.map((v) => (
-              <tr key={v.id} className="border-b border-brand-border last:border-0 hover:bg-brand-bg transition">
-                <td className="px-6 py-3 font-medium text-brand-text">
-                  <a href={`/app/vehicles/${v.id}`} className="hover:text-brand-accent">{v.plate}</a>
+              <tr key={v.id} className="border-b border-brand-border last:border-0 hover:bg-brand-bg/50 transition">
+                <td className="px-6 py-3.5 font-semibold text-brand-text">
+                  <a href={`/app/vehicles/${v.id}`} className="hover:text-brand-primary hover:underline">{v.plate}</a>
                 </td>
-                <td className="px-6 py-3 text-brand-text-secondary">{v.make} {v.model}</td>
-                <td className="px-6 py-3 text-brand-text-secondary">{v.year}</td>
-                <td className="px-6 py-3">
-                  <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold ${statusColors[v.status] ?? 'bg-slate-100 text-slate-700'}`}>
+                <td className="px-6 py-3.5 text-brand-text-secondary">{v.make} {v.model}</td>
+                <td className="px-6 py-3.5 text-brand-text-secondary">{v.year}</td>
+                <td className="px-6 py-3.5">
+                  <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold ${statusColors[v.status] ?? 'bg-slate-100 text-slate-700'}`}>
                     {statusLabels[v.status] ?? v.status}
                   </span>
                 </td>
-                <td className="px-6 py-3 text-brand-text-secondary">{v.driverName ?? '-'}</td>
-                <td className="px-6 py-3 text-brand-text-secondary">{v.currentOdometer.toLocaleString('pt-BR')} km</td>
-                <td className="px-6 py-3 text-brand-text-secondary">{v.fuelLevel}%</td>
-                <td className="px-6 py-3">
+                <td className="px-6 py-3.5 text-brand-text-secondary">{v.driverName ?? '-'}</td>
+                <td className="px-6 py-3.5 text-brand-text-secondary">{v.currentOdometer.toLocaleString('pt-BR')} km</td>
+                <td className="px-6 py-3.5 text-brand-text-secondary">{v.fuelLevel}%</td>
+                <td className="px-6 py-3.5">
                   <button
                     onClick={() => setDeleteId(v.id)}
-                    className="text-xs text-red-400 hover:text-red-300 transition"
+                    className="inline-flex items-center gap-1 text-xs font-medium text-brand-danger hover:text-red-700 transition"
                     aria-label={`Remover ${v.plate}`}
                   >
+                    <Trash2 className="w-3.5 h-3.5" />
                     Remover
                   </button>
                 </td>
               </tr>
             ))}
             {filtered.length === 0 && (
-              <tr><td colSpan={8} className="px-6 py-8 text-center text-brand-text-secondary">Nenhum veiculo encontrado.</td></tr>
+              <tr><td colSpan={8} className="px-6 py-10 text-center text-brand-text-secondary">Nenhum veículo encontrado.</td></tr>
             )}
           </tbody>
         </table>
@@ -136,7 +141,7 @@ export default function VehiclesManager({ initialVehicles }: { initialVehicles: 
 
       <CrudModal
         open={modalOpen}
-        title="Adicionar veiculo"
+        title="Adicionar veículo"
         onClose={() => setModalOpen(false)}
         onSubmit={addVehicle}
         fields={[
@@ -145,29 +150,29 @@ export default function VehiclesManager({ initialVehicles }: { initialVehicles: 
           { name: 'model', label: 'Modelo', type: 'text', required: true },
           { name: 'year', label: 'Ano', type: 'number', required: true, defaultValue: 2024 },
           { name: 'type', label: 'Tipo', type: 'select', required: true, options: [
-            { value: 'car', label: 'Carro' }, { value: 'truck', label: 'Caminhao' },
+            { value: 'car', label: 'Carro' }, { value: 'truck', label: 'Caminhão' },
             { value: 'van', label: 'Van' }, { value: 'motorcycle', label: 'Moto' },
           ]},
-          { name: 'fuelType', label: 'Combustivel', type: 'select', required: true, options: [
+          { name: 'fuelType', label: 'Combustível', type: 'select', required: true, options: [
             { value: 'gasoline', label: 'Gasolina' }, { value: 'flex', label: 'Flex' },
-            { value: 'diesel', label: 'Diesel' }, { value: 'electric', label: 'Eletrico' },
+            { value: 'diesel', label: 'Diesel' }, { value: 'electric', label: 'Elétrico' },
           ]},
           { name: 'status', label: 'Status', type: 'select', required: true, options: [
-            { value: 'available', label: 'Disponivel' }, { value: 'in_use', label: 'Em rota' },
-            { value: 'maintenance', label: 'Manutencao' }, { value: 'unavailable', label: 'Indisponivel' },
+            { value: 'available', label: 'Disponível' }, { value: 'in_use', label: 'Em rota' },
+            { value: 'maintenance', label: 'Manutenção' }, { value: 'unavailable', label: 'Indisponível' },
           ]},
-          { name: 'currentOdometer', label: 'Odometro (km)', type: 'number', defaultValue: 0 },
-          { name: 'fuelLevel', label: 'Nivel combustivel (%)', type: 'number', defaultValue: 100 },
+          { name: 'currentOdometer', label: 'Odômetro (km)', type: 'number', defaultValue: 0 },
+          { name: 'fuelLevel', label: 'Nível de combustível (%)', type: 'number', defaultValue: 100 },
         ]}
       />
 
       {deleteId && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60" onClick={() => setDeleteId(null)}>
-          <div className="bg-brand-surface rounded-xl border border-brand-border p-6 w-full max-w-sm" onClick={(e) => e.stopPropagation()}>
-            <h3 className="font-bold text-lg text-brand-text mb-2">Remover veiculo?</h3>
-            <p className="text-sm text-brand-text-secondary mb-4">Esta acao nao pode ser desfeita.</p>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm" onClick={() => setDeleteId(null)}>
+          <div className="bg-white rounded-2xl border border-brand-border p-6 w-full max-w-sm shadow-2xl" onClick={(e) => e.stopPropagation()}>
+            <h3 className="font-bold text-lg text-brand-text mb-2">Remover veículo?</h3>
+            <p className="text-sm text-brand-text-secondary mb-5">Esta ação não pode ser desfeita.</p>
             <div className="flex gap-3">
-              <button onClick={() => deleteVehicle(deleteId)} className="flex-1 rounded-lg bg-red-500 px-4 py-2.5 font-semibold text-white hover:bg-red-600 transition min-h-12">Remover</button>
+              <button onClick={() => deleteVehicle(deleteId)} className="flex-1 rounded-lg bg-brand-danger px-4 py-2.5 font-semibold text-white hover:opacity-90 transition min-h-12">Remover</button>
               <button onClick={() => setDeleteId(null)} className="rounded-lg border border-brand-border px-4 py-2.5 font-medium text-brand-text hover:bg-brand-bg transition min-h-12">Cancelar</button>
             </div>
           </div>
