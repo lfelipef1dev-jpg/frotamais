@@ -38,19 +38,27 @@ export default function SignInForm() {
   const handleDemo = async () => {
     setEmail(DEMO_EMAIL);
     setPassword(DEMO_PASSWORD);
-    // Cria a conta demo se nao existir
     setLoading(true);
     setError('');
+    // Tenta login primeiro; cria a conta demo apenas se ainda nao existir
+    const { error: signInError } = await authClient.signIn.email({
+      email: DEMO_EMAIL,
+      password: DEMO_PASSWORD,
+    });
+    if (!signInError) {
+      window.location.href = '/app/dashboard';
+      return;
+    }
     try {
       await authClient.signUp.email({
         name: 'Operador Frotamais',
         email: DEMO_EMAIL,
         password: DEMO_PASSWORD,
       });
-      await doLogin(DEMO_EMAIL, DEMO_PASSWORD);
     } catch {
-      await doLogin(DEMO_EMAIL, DEMO_PASSWORD);
+      // conta pode ja existir; segue para o login
     }
+    await doLogin(DEMO_EMAIL, DEMO_PASSWORD);
   };
 
   return (
