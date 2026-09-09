@@ -11,23 +11,22 @@ export default function SignUpForm() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
-    setLoading(true);
 
     if (password.length < 8) {
-      setError('Senha deve ter no minimo 8 caracteres');
-      setLoading(false);
+      setError('A senha deve ter no mínimo 8 caracteres.');
       return;
     }
 
+    setLoading(true);
     try {
-      const { error } = await authClient.signUp.email({
+      const { error: err } = await authClient.signUp.email({
         name,
         email,
         password,
       });
 
-      if (error) {
-        setError(error.message ?? 'Erro ao cadastrar');
+      if (err) {
+        setError(err.message ?? 'Erro ao criar conta. Tente outro email.');
       } else {
         window.location.href = '/app/dashboard';
       }
@@ -51,7 +50,8 @@ export default function SignUpForm() {
           required
           value={name}
           onChange={(e) => setName(e.target.value)}
-          className="w-full rounded-lg border border-brand-border bg-brand-surface px-3 py-2.5 text-brand-text focus-visible:ring-2 focus-visible:ring-brand-accent outline-none"
+          className="w-full rounded-lg border border-brand-border bg-white px-3 py-2.5 text-brand-text focus-visible:ring-2 focus-visible:ring-brand-primary outline-none transition"
+          placeholder="Seu nome"
         />
       </div>
 
@@ -66,13 +66,14 @@ export default function SignUpForm() {
           required
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="w-full rounded-lg border border-brand-border bg-brand-surface px-3 py-2.5 text-brand-text focus-visible:ring-2 focus-visible:ring-brand-accent outline-none"
+          className="w-full rounded-lg border border-brand-border bg-white px-3 py-2.5 text-brand-text focus-visible:ring-2 focus-visible:ring-brand-primary outline-none transition"
+          placeholder="seu@email.com"
         />
       </div>
 
       <div>
         <label htmlFor="password" className="block text-sm font-medium text-brand-text mb-1">
-          Senha (minimo 8 caracteres)
+          Senha (mínimo 8 caracteres)
         </label>
         <input
           id="password"
@@ -81,12 +82,13 @@ export default function SignUpForm() {
           required
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          className="w-full rounded-lg border border-brand-border bg-brand-surface px-3 py-2.5 text-brand-text focus-visible:ring-2 focus-visible:ring-brand-accent outline-none"
+          className="w-full rounded-lg border border-brand-border bg-white px-3 py-2.5 text-brand-text focus-visible:ring-2 focus-visible:ring-brand-primary outline-none transition"
+          placeholder="••••••••"
         />
       </div>
 
       {error && (
-        <p className="text-sm text-red-400" role="alert">
+        <p className="text-sm text-brand-danger" role="alert">
           {error}
         </p>
       )}
@@ -94,13 +96,13 @@ export default function SignUpForm() {
       <button
         type="submit"
         disabled={loading}
-        className="w-full rounded-lg bg-brand-accent px-4 py-3 font-semibold text-brand-bg transition hover:bg-brand-accent-hover disabled:opacity-60 min-h-12"
+        className="w-full rounded-lg bg-brand-primary px-4 py-3 font-semibold text-white transition hover:bg-brand-primary-600 disabled:opacity-60 min-h-12 shadow-sm"
       >
-        {loading ? 'Cadastrando...' : 'Criar conta de demonstracao'}
+        {loading ? 'Criando conta...' : 'Criar conta de demonstração'}
       </button>
 
-      <p className="text-center text-sm text-brand-text-secondary">
-        Conta de demonstracao. Nenhum dado real e coletado.
+      <p className="text-center text-xs text-brand-text-light">
+        Conta de demonstração. Nenhum dado real é coletado.
       </p>
     </form>
   );

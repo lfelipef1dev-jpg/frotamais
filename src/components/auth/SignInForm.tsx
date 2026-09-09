@@ -1,40 +1,55 @@
 import { useState } from 'react';
 import { authClient } from '../../lib/auth-client';
 
+const DEMO_EMAIL = 'frotas@frotamais.com.br';
+const DEMO_PASSWORD = 'frotas12345';
+
 export default function SignInForm() {
-  const [email, setEmail] = useState('frotas@frotamais.com.br');
-  const [password, setPassword] = useState('frotas12345');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError('');
+  const doLogin = async (loginEmail: string, loginPassword: string) => {
     setLoading(true);
-
+    setError('');
     try {
-      // Tenta cadastrar; se ja existir, ignora e faz login
-      await authClient.signUp.email({
-        name: 'Operador Frotamais',
-        email,
-        password,
+      const { error: signInError } = await authClient.signIn.email({
+        email: loginEmail,
+        password: loginPassword,
       });
-
-      const { error } = await authClient.signIn.email({ email, password });
-      if (error) {
-        setError('Erro ao entrar. Tente novamente.');
+      if (signInError) {
+        setError('Email ou senha inválidos.');
       } else {
         window.location.href = '/app/dashboard';
       }
     } catch {
-      const { error } = await authClient.signIn.email({ email, password });
-      if (error) {
-        setError('Erro ao entrar. Tente novamente.');
-      } else {
-        window.location.href = '/app/dashboard';
-      }
+      setError('Erro ao conectar. Tente novamente.');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    await doLogin(email, password);
+  };
+
+  const handleDemo = async () => {
+    setEmail(DEMO_EMAIL);
+    setPassword(DEMO_PASSWORD);
+    // Cria a conta demo se nao existir
+    setLoading(true);
+    setError('');
+    try {
+      await authClient.signUp.email({
+        name: 'Operador Frotamais',
+        email: DEMO_EMAIL,
+        password: DEMO_PASSWORD,
+      });
+      await doLogin(DEMO_EMAIL, DEMO_PASSWORD);
+    } catch {
+      await doLogin(DEMO_EMAIL, DEMO_PASSWORD);
     }
   };
 
@@ -51,7 +66,8 @@ export default function SignInForm() {
           required
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="w-full rounded-lg border border-brand-border bg-brand-surface px-3 py-2.5 text-brand-text focus-visible:ring-2 focus-visible:ring-brand-accent outline-none"
+          className="w-full rounded-lg border border-brand-border bg-white px-3 py-2.5 text-brand-text focus-visible:ring-2 focus-visible:ring-brand-primary outline-none transition"
+          placeholder="seu@email.com"
         />
       </div>
 
@@ -66,12 +82,13 @@ export default function SignInForm() {
           required
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          className="w-full rounded-lg border border-brand-border bg-brand-surface px-3 py-2.5 text-brand-text focus-visible:ring-2 focus-visible:ring-brand-accent outline-none"
+          className="w-full rounded-lg border border-brand-border bg-white px-3 py-2.5 text-brand-text focus-visible:ring-2 focus-visible:ring-brand-primary outline-none transition"
+          placeholder="••••••••"
         />
       </div>
 
       {error && (
-        <p className="text-sm text-red-400" role="alert">
+        <p className="text-sm text-brand-danger" role="alert">
           {error}
         </p>
       )}
@@ -79,13 +96,22 @@ export default function SignInForm() {
       <button
         type="submit"
         disabled={loading}
-        className="w-full rounded-lg bg-brand-accent px-4 py-3 font-semibold text-brand-bg transition hover:bg-brand-accent-hover disabled:opacity-60 min-h-12"
+        className="w-full rounded-lg bg-brand-primary px-4 py-3 font-semibold text-white transition hover:bg-brand-primary-600 disabled:opacity-60 min-h-12 shadow-sm"
       >
         {loading ? 'Entrando...' : 'Entrar no painel'}
       </button>
 
-      <p className="text-center text-sm text-brand-text-secondary">
-        Credenciais de teste preenchidas. Clique em entrar para acessar.
+      <button
+        type="button"
+        onClick={handleDemo}
+        disabled={loading}
+        className="w-full rounded-lg border border-brand-border px-4 py-3 font-medium text-brand-text-secondary transition hover:bg-brand-bg disabled:opacity-60 min-h-12"
+      >
+        Usar conta de demonstração
+      </button>
+
+      <p className="text-center text-xs text-brand-text-light">
+        A demonstração utiliza dados simulados e não gera documentos fiscais.
       </p>
     </form>
   );
