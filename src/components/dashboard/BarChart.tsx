@@ -9,7 +9,7 @@ export default function BarChart({ data, title, unit }: { data: DataPoint[]; tit
   const barWidth = 100 / Math.max(data.length, 1);
 
   return (
-    <div className="bg-brand-surface rounded-xl border border-brand-border p-5">
+    <div className="bg-white rounded-2xl border border-brand-border p-5 shadow-sm">
       <h3 className="font-bold text-brand-text mb-4">{title}</h3>
       <div className="space-y-3">
         {data.map((d) => (
@@ -30,7 +30,7 @@ export default function BarChart({ data, title, unit }: { data: DataPoint[]; tit
           </div>
         ))}
         {data.length === 0 && (
-          <p className="text-sm text-brand-text-secondary text-center py-4">Sem dados disponiveis.</p>
+          <p className="text-sm text-brand-text-secondary text-center py-4">Sem dados disponíveis.</p>
         )}
       </div>
     </div>

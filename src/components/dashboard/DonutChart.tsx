@@ -11,11 +11,11 @@ export default function DonutChart({ data, title, centerLabel, centerValue }: { 
   let offset = 0;
 
   return (
-    <div className="bg-brand-surface rounded-xl border border-brand-border p-5">
+    <div className="bg-white rounded-2xl border border-brand-border p-5 shadow-sm">
       <h3 className="font-bold text-brand-text mb-4">{title}</h3>
       <div className="flex items-center gap-6">
         <svg width="160" height="160" viewBox="0 0 160 160" className="flex-shrink-0">
-          <circle cx="80" cy="80" r={radius} fill="none" stroke="#1A1A1A" strokeWidth="20" />
+          <circle cx="80" cy="80" r={radius} fill="none" stroke="#E2E8F0" strokeWidth="20" />
           {total > 0 && data.map((slice) => {
             const dash = (slice.value / total) * circumference;
             const circle = (
