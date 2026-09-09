@@ -1,4 +1,5 @@
----
+﻿---
+import { fixPt } from '../../lib/format';
 import App from '../../layouts/App.astro';
 import { getDb } from '../../db/client';
 import { getVehicles, getDrivers } from '../../db/queries';
@@ -13,7 +14,7 @@ const driversById = Object.fromEntries(drivers.map((d) => [d.id, d]));
 
 const vehiclesWithDriver = vehicles.map((v) => ({
   ...v,
-  driverName: v.assignedDriverId ? driversById[v.assignedDriverId]?.name : null,
+  driverName: v.assignedDriverId ? fixPt(driversById[v.assignedDriverId]?.name) : null,
 }));
 ---
 

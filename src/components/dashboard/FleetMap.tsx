@@ -15,16 +15,19 @@ interface VehiclePosition {
 interface VehicleInfo {
   id: string;
   plate: string;
-  make: string;
-  model: string;
+  make?: string;
+  model?: string;
   status: string;
-  fuelLevel: number;
-  currentOdometer: number;
+  fuelLevel?: number;
+  currentOdometer?: number;
+  lat?: number;
+  lng?: number;
+  driver?: string;
 }
 
 interface FleetMapProps {
-  vehicles: VehicleInfo[];
-  initialPositions: VehiclePosition[];
+  vehicles?: VehicleInfo[];
+  initialPositions?: VehiclePosition[];
   center?: [number, number];
   zoom?: number;
   streamUrl?: string;
@@ -52,8 +55,8 @@ const createVehicleIcon = (status: string) => {
 };
 
 export default function FleetMap({
-  vehicles,
-  initialPositions,
+  vehicles = [],
+  initialPositions = [],
   center = [-14.235, -51.9253],
   zoom = 4,
   streamUrl = '/api/fleet/stream',
@@ -79,10 +82,13 @@ export default function FleetMap({
 
     mapRef.current = map;
 
-    const positionsMap = new Map(initialPositions.map((p) => [p.id, p]));
+    const positionsMap = new Map((initialPositions ?? []).map((p) => [p.id, p]));
 
-    vehicles.forEach((vehicle) => {
-      const pos = positionsMap.get(vehicle.id);
+    (vehicles ?? []).forEach((vehicle) => {
+      const pos = positionsMap.get(vehicle.id)
+        ?? (vehicle.lat != null && vehicle.lng != null
+          ? { id: vehicle.id, lat: vehicle.lat, lng: vehicle.lng }
+          : undefined);
       if (!pos) return;
 
       const marker = L.marker([pos.lat, pos.lng], {
@@ -92,12 +98,13 @@ export default function FleetMap({
       marker.bindPopup(`
         <div style="min-width: 180px;">
           <strong>${vehicle.plate}</strong><br>
-          <span style="color: #666; font-size: 12px;">${vehicle.make} ${vehicle.model}</span>
+          ${vehicle.make ? `<span style="color: #666; font-size: 12px;">${vehicle.make} ${vehicle.model ?? ''}</span>` : ''}
+          ${vehicle.driver ? `<span style="color: #666; font-size: 12px;">${vehicle.driver}</span>` : ''}
           <hr style="margin: 6px 0; border: none; border-top: 1px solid #eee;">
           <div style="font-size: 12px;">
             <div>Status: <strong>${VEHICLE_STATUS_LABELS[vehicle.status] ?? vehicle.status}</strong></div>
-            <div>Combustível: <strong>${vehicle.fuelLevel}%</strong></div>
-            <div>Odômetro: <strong>${num(vehicle.currentOdometer)} km</strong></div>
+            ${vehicle.fuelLevel != null ? `<div>Combustível: <strong>${vehicle.fuelLevel}%</strong></div>` : ''}
+            ${vehicle.currentOdometer != null ? `<div>Odômetro: <strong>${num(vehicle.currentOdometer)} km</strong></div>` : ''}
           </div>
         </div>
       `);

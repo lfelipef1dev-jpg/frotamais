@@ -79,7 +79,7 @@ const statusColors: Record<string, string> = {
   {vehicle.currentLat && vehicle.currentLng && (
     <div class="bg-brand-surface rounded-xl border border-brand-border p-4 mb-8">
       <h3 class="font-bold text-brand-text mb-3">Posição atual</h3>
-      <FleetMap client:only="react" vehicles={[{ id: vehicle.id, plate: vehicle.plate, status: vehicle.status, lat: vehicle.currentLat, lng: vehicle.currentLng, driver: assignedDriver?.name }]} />
+      <FleetMap client:only="react" vehicles={[{ id: vehicle.id, plate: vehicle.plate, make: vehicle.make, model: vehicle.model, status: vehicle.status, fuelLevel: vehicle.fuelLevel, currentOdometer: vehicle.currentOdometer, lat: vehicle.currentLat, lng: vehicle.currentLng, driver: assignedDriver ? fixPt(assignedDriver.name) : undefined }]} />
     </div>
   )}
 

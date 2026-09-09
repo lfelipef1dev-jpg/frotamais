@@ -46,6 +46,19 @@ const PT_FIXES: [RegExp, string][] = [
   [/\bcombustivel\b/gi, 'combustível'],
   [/\bSubstituicao\b/g, 'Substituição'],
   [/\bsubstituicao\b/g, 'substituição'],
+  [/\bDistribuicao\b/g, 'Distribuição'],
+  [/\bdistribuicao\b/g, 'distribuição'],
+  [/\bLogistico\b/g, 'Logístico'],
+  [/\blogistico\b/g, 'logístico'],
+  [/\bLogistica\b/g, 'Logística'],
+  [/\blogistica\b/g, 'logística'],
+  [/\bnao\b/g, 'não'],
+  [/\bNao\b/g, 'Não'],
+  [/\bruído\b/g, 'ruído'],
+  [/\bruido\b/g, 'ruído'],
+  [/\bRuido\b/g, 'Ruído'],
+  [/\bfunciona\b/g, 'funciona'],
+  [/\bVazamento\b/g, 'Vazamento'],
   // "ha" como verbo haver (há) — quase sempre erro de acento em pt-BR
   [/\bha\b(?=\s+\d|\s+mais|\s+cerca)/g, 'há'],
   // Cidades e nomes próprios comuns
@@ -63,6 +76,10 @@ const PT_FIXES: [RegExp, string][] = [
   [/\bMaceio\b/g, 'Maceió'],
   [/\bCuritiba\b/g, 'Curitiba'],
   [/\bRecife\b/g, 'Recife'],
+  [/\bFlorianopolis\b/g, 'Florianópolis'],
+  [/\bFortaleza\b/g, 'Fortaleza'],
+  [/\bVitoria\b/g, 'Vitória'],
+  [/\bNatal\b/g, 'Natal'],
 ];
 
 export function fixPt(text: string | null | undefined): string {

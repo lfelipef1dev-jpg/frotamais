@@ -4,7 +4,7 @@ import { getDb } from '../../db/client';
 import { getVehicles, getDrivers, getFuelLogs, getMaintenance, getTrips, getSafetyEvents, getAlerts, getInspections } from '../../db/queries';
 import { calculateSafetyScore } from '../../lib/safety-score';
 import BarChart from '../../components/dashboard/BarChart';
-import { brl, num } from '../../lib/format';
+import { brl, num, fixPt } from '../../lib/format';
 import DonutChart from '../../components/dashboard/DonutChart';
 
 export const prerender = false;
@@ -45,7 +45,7 @@ const maintenanceByVehicle = vehicles.map((v) => {
 const safetyByDriver = drivers.map((d) => {
   const score = calculateSafetyScore(events.filter((e) => e.driverId === d.id));
   return {
-    label: d.name.split(' ')[0],
+    label: fixPt(d.name).split(' ')[0],
     value: score,
     color: score >= 90 ? '#22C55E' : score >= 70 ? '#EAB308' : '#EF4444',
   };
