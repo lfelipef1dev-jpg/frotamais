@@ -4,6 +4,7 @@ import { getDb } from '../../db/client';
 import { getVehicles, getDrivers, getFuelLogs, getMaintenance, getTrips, getSafetyEvents, getAlerts, getInspections } from '../../db/queries';
 import { calculateSafetyScore } from '../../lib/safety-score';
 import BarChart from '../../components/dashboard/BarChart';
+import { brl, num } from '../../lib/format';
 import DonutChart from '../../components/dashboard/DonutChart';
 
 export const prerender = false;
@@ -96,15 +97,15 @@ const avgSafetyScore = drivers.length > 0
   <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
     <div class="bg-white rounded-2xl p-5 border border-brand-border shadow-sm">
       <p class="text-sm text-brand-text-secondary font-medium">Custo total combustível</p>
-      <p class="text-2xl font-extrabold text-brand-text mt-2">R$ {totalFuelCost.toFixed(2)}</p>
+      <p class="text-2xl font-extrabold text-brand-text mt-2">{brl(totalFuelCost)}</p>
     </div>
     <div class="bg-white rounded-2xl p-5 border border-brand-border shadow-sm">
       <p class="text-sm text-brand-text-secondary font-medium">Custo total manutenção</p>
-      <p class="text-2xl font-extrabold text-brand-text mt-2">R$ {totalMaintenanceCost.toFixed(2)}</p>
+      <p class="text-2xl font-extrabold text-brand-text mt-2">{brl(totalMaintenanceCost)}</p>
     </div>
     <div class="bg-white rounded-2xl p-5 border border-brand-border shadow-sm">
       <p class="text-sm text-brand-text-secondary font-medium">Km total da frota</p>
-      <p class="text-2xl font-extrabold text-brand-text mt-2">{totalKm.toLocaleString('pt-BR')}</p>
+      <p class="text-2xl font-extrabold text-brand-text mt-2">{num(totalKm)}</p>
     </div>
     <div class="bg-white rounded-2xl p-5 border border-brand-border shadow-sm">
       <p class="text-sm text-brand-text-secondary font-medium">Score médio frota</p>

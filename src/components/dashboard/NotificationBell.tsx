@@ -1,4 +1,5 @@
 ﻿import { useState, useEffect } from 'react';
+import { dateTimeBR, fixPt } from '../../lib/format';
 
 interface Alert {
   id: string;
@@ -45,9 +46,9 @@ export default function NotificationBell({ initialAlerts }: { initialAlerts: Ale
                   <div className="flex items-start gap-2">
                     <span className={`w-2 h-2 mt-1.5 rounded-full flex-shrink-0 ${a.severity === 'critical' ? 'bg-red-500' : a.severity === 'high' ? 'bg-orange-500' : 'bg-yellow-500'}`} aria-hidden="true" />
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm text-brand-text truncate">{a.details}</p>
+                      <p className="text-sm text-brand-text truncate">{fixPt(a.details)}</p>
                       <p className="text-xs text-brand-text-secondary mt-0.5">
-                        {a.vehiclePlate ?? ''} &bull; {new Date(a.triggeredAt).toLocaleString('pt-BR')}
+                        {a.vehiclePlate ?? ''} &bull; {dateTimeBR(a.triggeredAt)}
                       </p>
                     </div>
                   </div>

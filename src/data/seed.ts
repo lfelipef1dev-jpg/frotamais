@@ -44,10 +44,10 @@ export const tripsData = [
 ];
 
 export const maintenanceData = [
-  { id: crypto.randomUUID(), vehicleId: v4, type: 'oil_change', description: 'Troca de oleo lubrificante e filtro', cost: 450.9, performedAt: '2026-08-14T08:00:00.000Z', performedBy: 'Auto Mecanica Brasil', nextDueKm: 33000, nextDueDate: '2026-11-14T00:00:00.000Z' },
+  { id: crypto.randomUUID(), vehicleId: v4, type: 'oil_change', description: 'Troca de óleo lubrificante e filtro', cost: 450.9, performedAt: '2026-08-14T08:00:00.000Z', performedBy: 'Auto Mecânica Brasil', nextDueKm: 33000, nextDueDate: '2026-11-14T00:00:00.000Z' },
   { id: crypto.randomUUID(), vehicleId: v2, type: 'tire_change', description: 'Substituicao dos quatro pneus', cost: 1850, performedAt: '2026-08-10T10:00:00.000Z', performedBy: 'PneuCenter Sao Paulo', nextDueKm: 70000, nextDueDate: '2027-02-10T00:00:00.000Z' },
-  { id: crypto.randomUUID(), vehicleId: v7, type: 'brake_service', description: 'Revisao e troca de pastilhas de freio', cost: 920.5, performedAt: '2026-08-05T13:00:00.000Z', performedBy: 'Scania Service Center', nextDueKm: 135000, nextDueDate: '2026-12-05T00:00:00.000Z' },
-  { id: crypto.randomUUID(), vehicleId: v6, type: 'inspection', description: 'Inspecao geral e ajustes preventivos', cost: 320, performedAt: '2026-08-01T09:00:00.000Z', performedBy: 'Iveco Concessionaria BH', nextDueKm: 45000, nextDueDate: '2026-11-01T00:00:00.000Z' },
+  { id: crypto.randomUUID(), vehicleId: v7, type: 'brake_service', description: 'Revisão e troca de pastilhas de freio', cost: 920.5, performedAt: '2026-08-05T13:00:00.000Z', performedBy: 'Scania Service Center', nextDueKm: 135000, nextDueDate: '2026-12-05T00:00:00.000Z' },
+  { id: crypto.randomUUID(), vehicleId: v6, type: 'inspection', description: 'Inspeção geral e ajustes preventivos', cost: 320, performedAt: '2026-08-01T09:00:00.000Z', performedBy: 'Iveco Concessionária BH', nextDueKm: 45000, nextDueDate: '2026-11-01T00:00:00.000Z' },
 ];
 
 export const fuelLogsData = [

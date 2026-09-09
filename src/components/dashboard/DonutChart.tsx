@@ -4,6 +4,8 @@ interface Slice {
   color: string;
 }
 
+import { num } from '../../lib/format';
+
 export default function DonutChart({ data, title, centerLabel, centerValue }: { data: Slice[]; title: string; centerLabel?: string; centerValue?: string }) {
   const total = data.reduce((sum, d) => sum + d.value, 0);
   const radius = 60;
@@ -51,7 +53,7 @@ export default function DonutChart({ data, title, centerLabel, centerValue }: { 
             <div key={d.label} className="flex items-center gap-2 text-sm">
               <span className="w-3 h-3 rounded-full flex-shrink-0" style={{ backgroundColor: d.color }} aria-hidden="true" />
               <span className="text-brand-text-secondary flex-1">{d.label}</span>
-              <span className="text-brand-text font-medium">{d.value.toLocaleString('pt-BR')}</span>
+              <span className="text-brand-text font-medium">{num(d.value)}</span>
               <span className="text-brand-text-light text-xs">{total > 0 ? `${Math.round((d.value / total) * 100)}%` : ''}</span>
             </div>
           ))}

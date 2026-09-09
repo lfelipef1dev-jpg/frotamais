@@ -4,6 +4,8 @@ interface DataPoint {
   color?: string;
 }
 
+import { num } from '../../lib/format';
+
 export default function BarChart({ data, title, unit }: { data: DataPoint[]; title: string; unit?: string }) {
   const maxValue = Math.max(...data.map((d) => d.value), 1);
   const barWidth = 100 / Math.max(data.length, 1);
@@ -16,7 +18,7 @@ export default function BarChart({ data, title, unit }: { data: DataPoint[]; tit
           <div key={d.label}>
             <div className="flex justify-between text-sm mb-1">
               <span className="text-brand-text-secondary">{d.label}</span>
-              <span className="text-brand-text font-medium">{d.value.toLocaleString('pt-BR')}{unit ? ` ${unit}` : ''}</span>
+              <span className="text-brand-text font-medium">{num(d.value)}{unit ? ` ${unit}` : ''}</span>
             </div>
             <div className="h-3 bg-brand-bg rounded-full overflow-hidden">
               <div

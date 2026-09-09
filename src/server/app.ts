@@ -3,6 +3,7 @@ import { eq, sql } from 'drizzle-orm';
 import { getDb } from '../db/client';
 import { getFleetSummary, getVehicles, getDrivers, getTrips, getMaintenance, getFuelLogs, getAlerts, getSafetyEvents, getUsers, getInspections } from '../db/queries';
 import { calculateSafetyScore } from '../lib/safety-score';
+import { fixPt, dateBR, TRIP_STATUS_LABELS, MAINTENANCE_TYPE_LABELS } from '../lib/format';
 import * as schema from '../db/schema';
 
 export const createApp = () => {
@@ -210,9 +211,9 @@ export const createApp = () => {
     const logs = await getFuelLogs(db);
     const vehicles = await getVehicles(db);
     const vById = Object.fromEntries(vehicles.map((v) => [v.id, v]));
-    const header = 'Data,Veiculo,Odometro,Litros,Custo,Posto\n';
+    const header = 'Data,Veículo,Odômetro,Litros,Custo,Posto\n';
     const rows = logs.map((f) =>
-      `${new Date(f.date).toLocaleDateString('pt-BR')},${vById[f.vehicleId]?.plate ?? f.vehicleId},${f.odometer},${f.liters},${f.cost.toFixed(2)},${f.station ?? ''}`
+      `${dateBR(f.date)},${vById[f.vehicleId]?.plate ?? f.vehicleId},${f.odometer},${f.liters},${f.cost.toFixed(2)},${fixPt(f.station) ?? ''}`
     ).join('\n');
     return new Response(header + rows, {
       headers: {
@@ -227,9 +228,9 @@ export const createApp = () => {
     const records = await getMaintenance(db);
     const vehicles = await getVehicles(db);
     const vById = Object.fromEntries(vehicles.map((v) => [v.id, v]));
-    const header = 'Veiculo,Tipo,Descricao,Custo,Data,Proximo Km,Proxima Data\n';
+    const header = 'Veículo,Tipo,Descrição,Custo,Data,Próximo Km,Próxima Data\n';
     const rows = records.map((m) =>
-      `${vById[m.vehicleId]?.plate ?? m.vehicleId},${m.type},${m.description ?? ''},${m.cost?.toFixed(2) ?? '0'},${new Date(m.performedAt).toLocaleDateString('pt-BR')},${m.nextDueKm ?? ''},${m.nextDueDate ? new Date(m.nextDueDate).toLocaleDateString('pt-BR') : ''}`
+      `${vById[m.vehicleId]?.plate ?? m.vehicleId},${MAINTENANCE_TYPE_LABELS[m.type] ?? m.type},${fixPt(m.description) ?? ''},${m.cost?.toFixed(2) ?? '0'},${dateBR(m.performedAt)},${m.nextDueKm ?? ''},${m.nextDueDate ? dateBR(m.nextDueDate) : ''}`
     ).join('\n');
     return new Response(header + rows, {
       headers: {
@@ -246,9 +247,9 @@ export const createApp = () => {
     const drivers = await getDrivers(db);
     const vById = Object.fromEntries(vehicles.map((v) => [v.id, v]));
     const dById = Object.fromEntries(drivers.map((d) => [d.id, d]));
-    const header = 'Veiculo,Motorista,Origem,Destino,Distancia Km,Status,Inicio\n';
+    const header = 'Veículo,Motorista,Origem,Destino,Distância Km,Status,Início\n';
     const rows = trips.map((t) =>
-      `${vById[t.vehicleId]?.plate ?? t.vehicleId},${dById[t.driverId]?.name ?? t.driverId},${t.startAddress ?? ''},${t.endAddress ?? ''},${t.distanceKm ?? ''},${t.status},${t.startedAt ? new Date(t.startedAt).toLocaleDateString('pt-BR') : ''}`
+      `${vById[t.vehicleId]?.plate ?? t.vehicleId},${dById[t.driverId]?.name ?? t.driverId},${t.startAddress ?? ''},${t.endAddress ?? ''},${t.distanceKm ?? ''},${TRIP_STATUS_LABELS[t.status] ?? t.status},${t.startedAt ? dateBR(t.startedAt) : ''}`
     ).join('\n');
     return new Response(header + rows, {
       headers: {

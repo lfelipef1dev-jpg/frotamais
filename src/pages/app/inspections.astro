@@ -1,4 +1,5 @@
 ---
+import { dateBR, fixPt, INSPECTION_TYPE_LABELS } from '../../lib/format';
 import App from '../../layouts/App.astro';
 import { getDb } from '../../db/client';
 import { getInspections, getVehicles, getDrivers } from '../../db/queries';
@@ -47,10 +48,10 @@ const driversById = Object.fromEntries(drivers.map((d) => [d.id, d]));
       <tbody>
         {inspections.map((i) => (
           <tr class="border-b border-brand-border last:border-0 hover:bg-brand-bg/30 transition">
-            <td class="px-6 py-3.5 text-brand-text-secondary">{new Date(i.performedAt).toLocaleDateString('pt-BR')}</td>
+            <td class="px-6 py-3.5 text-brand-text-secondary">{dateBR(i.performedAt)}</td>
             <td class="px-6 py-3.5 font-semibold text-brand-text">{vehiclesById[i.vehicleId]?.plate ?? '-'}</td>
             <td class="px-6 py-3.5 text-brand-text-secondary">{driversById[i.driverId]?.name ?? '-'}</td>
-            <td class="px-6 py-3.5 text-brand-text-secondary">{i.type === 'pre' ? 'Pré-viagem' : 'Pós-viagem'}</td>
+            <td class="px-6 py-3.5 text-brand-text-secondary">{INSPECTION_TYPE_LABELS[i.type] ?? i.type}</td>
             <td class="px-6 py-3.5">
               <span class={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold ${i.status === 'approved' ? 'bg-green-100 text-green-700' : i.status === 'failed' ? 'bg-red-100 text-red-700' : 'bg-yellow-100 text-yellow-700'}`}>
                 {i.status === 'approved' ? 'Aprovada' : i.status === 'failed' ? 'Reprovada' : 'Pendente'}

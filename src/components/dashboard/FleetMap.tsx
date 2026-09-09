@@ -1,6 +1,7 @@
 ﻿import { useEffect, useRef } from 'react';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
+import { VEHICLE_STATUS_LABELS, num } from '../../lib/format';
 
 interface VehiclePosition {
   id: string;
@@ -94,9 +95,9 @@ export default function FleetMap({
           <span style="color: #666; font-size: 12px;">${vehicle.make} ${vehicle.model}</span>
           <hr style="margin: 6px 0; border: none; border-top: 1px solid #eee;">
           <div style="font-size: 12px;">
-            <div>Status: <strong>${vehicle.status}</strong></div>
+            <div>Status: <strong>${VEHICLE_STATUS_LABELS[vehicle.status] ?? vehicle.status}</strong></div>
             <div>Combustível: <strong>${vehicle.fuelLevel}%</strong></div>
-            <div>Odômetro: <strong>${vehicle.currentOdometer.toLocaleString('pt-BR')} km</strong></div>
+            <div>Odômetro: <strong>${num(vehicle.currentOdometer)} km</strong></div>
           </div>
         </div>
       `);

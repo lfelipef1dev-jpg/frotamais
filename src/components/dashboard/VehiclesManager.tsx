@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Plus, Search, Trash2, Pencil } from 'lucide-react';
 import CrudModal from './CrudModal';
+import { num, dateBR, VEHICLE_TYPE_LABELS, FUEL_TYPE_LABELS, VEHICLE_STATUS_LABELS } from '../../lib/format';
 
 interface Vehicle {
   id: string;
@@ -141,7 +142,7 @@ export default function VehiclesManager({ initialVehicles }: { initialVehicles: 
                   </span>
                 </td>
                 <td className="px-6 py-3.5 text-brand-text-secondary">{v.driverName ?? '-'}</td>
-                <td className="px-6 py-3.5 text-brand-text-secondary">{v.currentOdometer.toLocaleString('pt-BR')} km</td>
+                <td className="px-6 py-3.5 text-brand-text-secondary">{num(v.currentOdometer)} km</td>
                 <td className="px-6 py-3.5 text-brand-text-secondary">{v.fuelLevel}%</td>
                 <td className="px-6 py-3.5">
                   <div className="flex items-center gap-3">

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Plus, Search, Trash2, Pencil, User } from 'lucide-react';
 import CrudModal from './CrudModal';
+import { num, dateBR } from '../../lib/format';
 
 interface Driver {
   id: string;
@@ -117,8 +118,8 @@ export default function DriversManager({ initialDrivers }: { initialDrivers: Dri
               <div className="text-sm text-brand-text-secondary space-y-2">
                 <p className="flex justify-between"><span>Score de segurança</span> <span className={`font-bold ${scoreColor(score)}`}>{score}/100</span></p>
                 <p className="flex justify-between"><span>Viagens</span> <span className="font-semibold text-brand-text">{d.totalTrips}</span></p>
-                <p className="flex justify-between"><span>Km total</span> <span className="font-semibold text-brand-text">{d.totalKm.toLocaleString('pt-BR')} km</span></p>
-                <p className="flex justify-between"><span>CNH válida até</span> <span className="font-semibold text-brand-text">{new Date(d.licenseExpiry).toLocaleDateString('pt-BR')}</span></p>
+                <p className="flex justify-between"><span>Km total</span> <span className="font-semibold text-brand-text">{num(d.totalKm)} km</span></p>
+                <p className="flex justify-between"><span>CNH válida até</span> <span className="font-semibold text-brand-text">{dateBR(d.licenseExpiry)}</span></p>
               </div>
             </div>
           );

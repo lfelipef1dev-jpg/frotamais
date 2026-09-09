@@ -1,4 +1,5 @@
 ---
+import { brl, num, dateBR, fixPt, MAINTENANCE_TYPE_LABELS } from '../../lib/format';
 import App from '../../layouts/App.astro';
 import { getDb } from '../../db/client';
 import { getMaintenance, getVehicles } from '../../db/queries';
@@ -30,10 +31,10 @@ const vehiclesById = Object.fromEntries(vehicles.map((v) => [v.id, v]));
           <tr class="border-b border-brand-border last:border-0 hover:bg-brand-bg/30 transition">
             <td class="px-6 py-3.5 font-semibold text-brand-text">{vehiclesById[m.vehicleId]?.plate}</td>
             <td class="px-6 py-3.5 text-brand-text-secondary">{m.description}</td>
-            <td class="px-6 py-3.5 text-brand-text-secondary">{new Date(m.performedAt).toLocaleDateString('pt-BR')}</td>
-            <td class="px-6 py-3.5 text-brand-text-secondary">R$ {m.cost?.toFixed(2)}</td>
-            <td class="px-6 py-3.5 text-brand-text-secondary">{m.nextDueKm?.toLocaleString('pt-BR') ?? '-'}</td>
-            <td class="px-6 py-3.5 text-brand-text-secondary">{m.nextDueDate ? new Date(m.nextDueDate).toLocaleDateString('pt-BR') : '-'}</td>
+            <td class="px-6 py-3.5 text-brand-text-secondary">{dateBR(m.performedAt)}</td>
+            <td class="px-6 py-3.5 text-brand-text-secondary">{m.cost != null ? brl(m.cost) : '-'}</td>
+            <td class="px-6 py-3.5 text-brand-text-secondary">{m.nextDueKm ? num(m.nextDueKm) : '-'}</td>
+            <td class="px-6 py-3.5 text-brand-text-secondary">{m.nextDueDate ? dateBR(m.nextDueDate) : '-'}</td>
           </tr>
         ))}
       </tbody>

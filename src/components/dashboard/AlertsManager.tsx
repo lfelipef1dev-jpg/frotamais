@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { dateTimeBR, fixPt, SEVERITY_LABELS } from '../../lib/format';
 
 interface AlertItem {
   id: string;
@@ -65,8 +66,8 @@ export default function AlertsManager({ initialAlerts }: { initialAlerts: AlertI
             <div className="flex items-start gap-3">
               <span className={`w-3 h-3 mt-1 rounded-full flex-shrink-0 ${a.severity === 'critical' ? 'bg-red-500' : a.severity === 'high' ? 'bg-orange-500' : 'bg-yellow-500'}`} aria-hidden="true" />
               <div>
-                <p className="font-medium text-brand-text">{a.details}</p>
-                <p className="text-xs text-brand-text-secondary mt-1">{a.vehiclePlate ?? a.vehicleId} &bull; {new Date(a.triggeredAt).toLocaleString('pt-BR')}</p>
+                <p className="font-medium text-brand-text">{fixPt(a.details)}</p>
+                <p className="text-xs text-brand-text-secondary mt-1">{a.vehiclePlate ?? a.vehicleId} &bull; {dateTimeBR(a.triggeredAt)}</p>
               </div>
             </div>
             <div className="flex items-center gap-3">

@@ -1,4 +1,5 @@
 ﻿---
+import { dateBR } from '../../lib/format';
 import App from '../../layouts/App.astro';
 import { getDb } from '../../db/client';
 import { getUsers } from '../../db/queries';
@@ -45,7 +46,7 @@ const currentUser = Astro.locals.user;
                 {ROLE_LABELS[u.role] ?? u.role}
               </span>
             </td>
-            <td class="px-6 py-3 text-brand-text-secondary">{u.createdAt ? new Date(u.createdAt).toLocaleDateString('pt-BR') : '-'}</td>
+            <td class="px-6 py-3 text-brand-text-secondary">{u.createdAt ? dateBR(u.createdAt) : '-'}</td>
             <td class="px-6 py-3">
               {currentUser?.id === u.id ? (
                 <span class="text-xs font-semibold text-brand-accent">Você</span>

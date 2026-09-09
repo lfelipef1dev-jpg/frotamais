@@ -1,4 +1,5 @@
 ---
+import { brl, num, dateTimeBR, fixPt } from '../../lib/format';
 import App from '../../layouts/App.astro';
 import { getDb } from '../../db/client';
 import { getFuelLogs, getVehicles } from '../../db/queries';
@@ -22,11 +23,11 @@ const totalCost = fuelLogs.reduce((acc, f) => acc + f.cost, 0);
     </div>
     <div class="bg-white rounded-2xl p-5 border border-brand-border shadow-sm">
       <p class="text-sm text-brand-text-secondary font-medium">Gasto total</p>
-      <p class="text-2xl font-extrabold text-brand-text mt-2">R$ {totalCost.toFixed(2)}</p>
+      <p class="text-2xl font-extrabold text-brand-text mt-2">{brl(totalCost)}</p>
     </div>
     <div class="bg-white rounded-2xl p-5 border border-brand-border shadow-sm">
       <p class="text-sm text-brand-text-secondary font-medium">Preço médio/litro</p>
-      <p class="text-2xl font-extrabold text-brand-text mt-2">R$ {totalLiters > 0 ? (totalCost / totalLiters).toFixed(2) : '0,00'}</p>
+      <p class="text-2xl font-extrabold text-brand-text mt-2">{totalLiters > 0 ? brl(totalCost / totalLiters) : brl(0)}</p>
     </div>
     <div class="bg-white rounded-2xl p-5 border border-brand-border shadow-sm">
       <p class="text-sm text-brand-text-secondary font-medium">Registros</p>
@@ -48,12 +49,12 @@ const totalCost = fuelLogs.reduce((acc, f) => acc + f.cost, 0);
       <tbody>
         {fuelLogs.map((f) => (
           <tr class="border-b border-brand-border last:border-0 hover:bg-brand-bg/30 transition">
-            <td class="px-6 py-3.5 text-brand-text-secondary">{new Date(f.date).toLocaleString('pt-BR')}</td>
+            <td class="px-6 py-3.5 text-brand-text-secondary">{dateTimeBR(f.date)}</td>
             <td class="px-6 py-3.5 font-semibold text-brand-text">{vehiclesById[f.vehicleId]?.plate}</td>
-            <td class="px-6 py-3.5 text-brand-text-secondary">{f.odometer.toLocaleString('pt-BR')} km</td>
+            <td class="px-6 py-3.5 text-brand-text-secondary">{num(f.odometer)} km</td>
             <td class="px-6 py-3.5 text-brand-text-secondary">{f.liters} L</td>
-            <td class="px-6 py-3.5 text-brand-text-secondary">R$ {f.cost.toFixed(2)}</td>
-            <td class="px-6 py-3.5 text-brand-text-secondary">{f.station}</td>
+            <td class="px-6 py-3.5 text-brand-text-secondary">{brl(f.cost)}</td>
+            <td class="px-6 py-3.5 text-brand-text-secondary">{fixPt(f.station)}</td>
           </tr>
         ))}
       </tbody>

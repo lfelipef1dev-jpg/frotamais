@@ -1,4 +1,5 @@
 ---
+import { brl, num, dateTimeBR, fixPt } from '../../lib/format';
 import App from '../../layouts/App.astro';
 import { KPICard } from '../../components/dashboard/KPICard';
 import FleetMap from '../../components/dashboard/FleetMap';
@@ -98,7 +99,7 @@ const statusClass = (status: string) => {
     <section class="bg-white rounded-2xl p-6 border border-brand-border shadow-sm" aria-labelledby="consumo-titulo">
       <h3 id="consumo-titulo" class="font-bold text-brand-text mb-4">Consumo de combustível (litros)</h3>
       <BarChart client:only="react" data={fuelByVehicle} title="" unit="L" />
-      <p class="text-xs text-brand-text-light mt-3">Total de {summary.totalFuelLiters.toFixed(1)} litros — R$ {summary.totalFuelCost.toFixed(2)} (valores simulados)</p>
+      <p class="text-xs text-brand-text-light mt-3">Total de {num(summary.totalFuelLiters)} litros — {brl(summary.totalFuelCost)} (valores simulados)</p>
     </section>
 
     <section class="bg-white rounded-2xl p-6 border border-brand-border shadow-sm" aria-labelledby="alertas-titulo">
@@ -111,8 +112,8 @@ const statusClass = (status: string) => {
           <li class="flex items-start gap-3 text-sm p-3 rounded-xl bg-brand-bg/50">
             <span class={`w-2 h-2 mt-1.5 rounded-full flex-shrink-0 ${a.severity === 'critical' ? 'bg-red-500' : a.severity === 'high' ? 'bg-orange-500' : 'bg-yellow-500'}`} aria-hidden="true" />
             <div>
-              <p class="text-brand-text font-medium">{a.details}</p>
-              <p class="text-brand-text-secondary text-xs">{new Date(a.triggeredAt).toLocaleString('pt-BR')}</p>
+              <p class="text-brand-text font-medium">{fixPt(a.details)}</p>
+              <p class="text-brand-text-secondary text-xs">{dateTimeBR(a.triggeredAt)}</p>
             </div>
           </li>
         ))}
@@ -142,7 +143,7 @@ const statusClass = (status: string) => {
                 {statusLabel(v.status)}
               </span>
             </td>
-            <td class="py-3.5 text-brand-text-secondary">{v.currentOdometer.toLocaleString('pt-BR')} km</td>
+            <td class="py-3.5 text-brand-text-secondary">{num(v.currentOdometer)} km</td>
             <td class="py-3.5 text-brand-text-secondary">{v.fuelLevel}%</td>
           </tr>
         ))}

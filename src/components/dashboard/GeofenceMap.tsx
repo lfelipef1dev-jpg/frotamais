@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
+import { GEOFENCE_TYPE_LABELS, VEHICLE_STATUS_LABELS } from '../../lib/format';
 
 interface Geofence {
   id: string;
@@ -58,7 +59,7 @@ export default function GeofenceMap({ geofences, vehicles }: GeofenceMapProps) {
         weight: 2,
         dashArray: g.active ? undefined : '5, 5',
       }).addTo(map);
-      circle.bindPopup(`<b>${g.name}</b><br/>Tipo: ${g.type}<br/>Raio: ${g.radius}m<br/>Status: ${g.active ? 'Ativo' : 'Inativo'}`);
+      circle.bindPopup(`<b>${g.name}</b><br/>Tipo: ${GEOFENCE_TYPE_LABELS[g.type] ?? g.type}<br/>Raio: ${g.radius}m<br/>Status: ${g.active ? 'Ativo' : 'Inativo'}`);
     });
 
     // Draw vehicles
@@ -73,7 +74,7 @@ export default function GeofenceMap({ geofences, vehicles }: GeofenceMapProps) {
         fillOpacity: 1,
         weight: 2,
       }).addTo(map);
-      marker.bindPopup(`<b>${v.plate}</b><br/>Status: ${v.status}`);
+      marker.bindPopup(`<b>${v.plate}</b><br/>Status: ${VEHICLE_STATUS_LABELS[v.status] ?? v.status}`);
     });
 
     // Fit bounds to show all
