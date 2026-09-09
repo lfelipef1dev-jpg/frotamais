@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Plus, Search, Trash2, Pencil, User } from 'lucide-react';
 import CrudModal from './CrudModal';
-import { num, dateBR } from '../../lib/format';
+import { num, dateBR, fixPt } from '../../lib/format';
 
 interface Driver {
   id: string;
@@ -95,21 +95,21 @@ export default function DriversManager({ initialDrivers }: { initialDrivers: Dri
                   {initials || <User className="w-5 h-5" />}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <a href={`/app/drivers/${d.id}`} className="font-bold text-brand-text hover:text-brand-primary truncate block">{d.name}</a>
+                  <a href={`/app/drivers/${d.id}`} className="font-bold text-brand-text hover:text-brand-primary truncate block">{fixPt(d.name)}</a>
                   <p className="text-xs text-brand-text-secondary">{d.phone}</p>
                 </div>
                 <div className="flex items-center gap-1">
                   <button
                     onClick={() => { setEditing(d); setModalOpen(true); }}
                     className="text-brand-primary hover:text-brand-primary-600 transition p-1.5 rounded-lg hover:bg-brand-bg"
-                    aria-label={`Editar ${d.name}`}
+                    aria-label={`Editar ${fixPt(d.name)}`}
                   >
                     <Pencil className="w-4 h-4" />
                   </button>
                   <button
                     onClick={() => setDeleteId(d.id)}
                     className="text-brand-danger hover:text-red-700 transition p-1.5 rounded-lg hover:bg-red-50"
-                    aria-label={`Remover ${d.name}`}
+                    aria-label={`Remover ${fixPt(d.name)}`}
                   >
                     <Trash2 className="w-4 h-4" />
                   </button>

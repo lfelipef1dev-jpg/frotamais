@@ -1,4 +1,5 @@
 ---
+import { fixPt, TRIP_STATUS_LABELS } from '../../lib/format';
 import App from '../../layouts/App.astro';
 import RoutePlanner from '../../components/dashboard/RoutePlanner';
 import { getDb } from '../../db/client';
@@ -63,10 +64,10 @@ const depot = {
       <tbody>
         {trips.map((t) => (
           <tr class="border-b border-brand-border last:border-0 hover:bg-brand-bg/30 transition">
-            <td class="px-6 py-3.5 text-brand-text-secondary">{t.startAddress}</td>
-            <td class="px-6 py-3.5 text-brand-text-secondary">{t.endAddress}</td>
+            <td class="px-6 py-3.5 text-brand-text-secondary">{fixPt(t.startAddress)}</td>
+            <td class="px-6 py-3.5 text-brand-text-secondary">{fixPt(t.endAddress)}</td>
             <td class="px-6 py-3.5 font-semibold text-brand-text">{vehiclesById[t.vehicleId]?.plate}</td>
-            <td class="px-6 py-3.5 text-brand-text-secondary">{driversById[t.driverId]?.name}</td>
+            <td class="px-6 py-3.5 text-brand-text-secondary">{fixPt(driversById[t.driverId]?.name)}</td>
             <td class="px-6 py-3.5">
               <span class={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold ${t.status === 'completed' ? 'bg-green-100 text-green-700' : t.status === 'in_progress' ? 'bg-blue-100 text-blue-700' : t.status === 'cancelled' ? 'bg-red-100 text-red-700' : 'bg-slate-100 text-slate-700'}`}>
                 {t.status === 'completed' ? 'Concluída' : t.status === 'in_progress' ? 'Em andamento' : t.status === 'cancelled' ? 'Cancelada' : 'Agendada'}

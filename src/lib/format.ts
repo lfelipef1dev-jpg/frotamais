@@ -43,6 +43,26 @@ const PT_FIXES: [RegExp, string][] = [
   [/\bConcessionaria\b/g, 'Concessionária'],
   [/\bconcessionaria\b/g, 'concessionária'],
   [/\bprevencao\b/gi, 'prevenção'],
+  [/\bcombustivel\b/gi, 'combustível'],
+  [/\bSubstituicao\b/g, 'Substituição'],
+  [/\bsubstituicao\b/g, 'substituição'],
+  // "ha" como verbo haver (há) — quase sempre erro de acento em pt-BR
+  [/\bha\b(?=\s+\d|\s+mais|\s+cerca)/g, 'há'],
+  // Cidades e nomes próprios comuns
+  [/\bSao Paulo\b/g, 'São Paulo'],
+  [/\bSao\b/g, 'São'],
+  [/\bBrasilia\b/g, 'Brasília'],
+  [/\bGoiania\b/g, 'Goiânia'],
+  [/\bGoias\b/g, 'Goiás'],
+  [/\bJoao\b/g, 'João'],
+  [/\bPraca\b/g, 'Praça'],
+  [/\bpraca\b/g, 'praça'],
+  [/\bAvenida\b/g, 'Avenida'],
+  [/\bAmericas\b/g, 'Américas'],
+  [/\bBelem\b/g, 'Belém'],
+  [/\bMaceio\b/g, 'Maceió'],
+  [/\bCuritiba\b/g, 'Curitiba'],
+  [/\bRecife\b/g, 'Recife'],
 ];
 
 export function fixPt(text: string | null | undefined): string {

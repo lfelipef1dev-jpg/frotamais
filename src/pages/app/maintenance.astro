@@ -30,7 +30,7 @@ const vehiclesById = Object.fromEntries(vehicles.map((v) => [v.id, v]));
         {maintenance.map((m) => (
           <tr class="border-b border-brand-border last:border-0 hover:bg-brand-bg/30 transition">
             <td class="px-6 py-3.5 font-semibold text-brand-text">{vehiclesById[m.vehicleId]?.plate}</td>
-            <td class="px-6 py-3.5 text-brand-text-secondary">{m.description}</td>
+            <td class="px-6 py-3.5 text-brand-text-secondary">{fixPt(m.description)}</td>
             <td class="px-6 py-3.5 text-brand-text-secondary">{dateBR(m.performedAt)}</td>
             <td class="px-6 py-3.5 text-brand-text-secondary">{m.cost != null ? brl(m.cost) : '-'}</td>
             <td class="px-6 py-3.5 text-brand-text-secondary">{m.nextDueKm ? num(m.nextDueKm) : '-'}</td>

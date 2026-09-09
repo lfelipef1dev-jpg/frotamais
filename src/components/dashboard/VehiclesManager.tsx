@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Plus, Search, Trash2, Pencil } from 'lucide-react';
 import CrudModal from './CrudModal';
-import { num, dateBR, VEHICLE_TYPE_LABELS, FUEL_TYPE_LABELS, VEHICLE_STATUS_LABELS } from '../../lib/format';
+import { num, dateBR, VEHICLE_TYPE_LABELS, FUEL_TYPE_LABELS, VEHICLE_STATUS_LABELS, fixPt } from '../../lib/format';
 
 interface Vehicle {
   id: string;
@@ -134,7 +134,7 @@ export default function VehiclesManager({ initialVehicles }: { initialVehicles: 
                 <td className="px-6 py-3.5 font-semibold text-brand-text">
                   <a href={`/app/vehicles/${v.id}`} className="hover:text-brand-primary hover:underline">{v.plate}</a>
                 </td>
-                <td className="px-6 py-3.5 text-brand-text-secondary">{v.make} {v.model}</td>
+                <td className="px-6 py-3.5 text-brand-text-secondary">{fixPt(v.make)} {fixPt(v.model)}</td>
                 <td className="px-6 py-3.5 text-brand-text-secondary">{v.year}</td>
                 <td className="px-6 py-3.5">
                   <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold ${statusColors[v.status] ?? 'bg-slate-100 text-slate-700'}`}>

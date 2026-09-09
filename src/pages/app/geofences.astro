@@ -1,4 +1,5 @@
 ﻿---
+import { fixPt, GEOFENCE_TYPE_LABELS } from '../../lib/format';
 import App from '../../layouts/App.astro';
 import { getDb } from '../../db/client';
 import { getGeofences, getVehicles } from '../../db/queries';
@@ -67,7 +68,7 @@ const typeColors: Record<string, string> = {
       <tbody>
         {geofences.map((g) => (
           <tr class="border-b border-brand-border last:border-0">
-            <td class="px-6 py-3 font-medium text-brand-text">{g.name}</td>
+            <td class="px-6 py-3 font-medium text-brand-text">{fixPt(g.name)}</td>
             <td class="px-6 py-3">
               <span class={`inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold ${typeColors[g.type] ?? 'bg-slate-100 text-slate-700'}`}>
                 {typeLabels[g.type] ?? g.type}

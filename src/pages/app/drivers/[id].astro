@@ -41,10 +41,10 @@ const completedTrips = trips.filter((t) => t.status === 'completed').length;
   <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
     <div class="flex items-center gap-4">
       <div class="w-16 h-16 rounded-full bg-brand-primary/10 text-brand-primary flex items-center justify-center font-bold text-xl">
-        {driver.name.split(' ').map((n) => n[0]).slice(0, 2).join('')}
+        {fixPt(driver.name).split(' ').map((n) => n[0]).slice(0, 2).join('')}
       </div>
       <div>
-        <h2 class="text-2xl font-extrabold text-brand-text">{driver.name}</h2>
+        <h2 class="text-2xl font-extrabold text-brand-text">{fixPt(driver.name)}</h2>
         <p class="text-brand-text-secondary mt-1">{driver.phone} &bull; CNH {driver.licenseNumber}</p>
       </div>
     </div>
@@ -173,7 +173,7 @@ const completedTrips = trips.filter((t) => t.status === 'completed').length;
       <tbody>
         {trips.map((t) => (
           <tr class="border-b border-brand-border last:border-0">
-            <td class="px-6 py-3 text-brand-text-secondary">{t.startAddress ?? '-'} &rarr; {t.endAddress ?? '-'}</td>
+            <td class="px-6 py-3 text-brand-text-secondary">{fixPt(t.startAddress) ?? '-'} &rarr; {fixPt(t.endAddress) ?? '-'}</td>
             <td class="px-6 py-3 text-brand-text-secondary">{vehiclesById[t.vehicleId]?.plate ?? '-'}</td>
             <td class="px-6 py-3 text-brand-text-secondary">{t.distanceKm ? `${t.distanceKm} km` : '-'}</td>
             <td class="px-6 py-3">
