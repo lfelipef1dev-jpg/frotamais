@@ -29,26 +29,46 @@ const features = [
   </header>
 
   <main id="conteudo">
-    <section class="py-16 md:py-24 bg-gradient-to-br from-brand-bg to-brand-surface overflow-hidden">
-      <div class="max-w-6xl mx-auto px-4 md:px-6 grid md:grid-cols-2 gap-12 items-center">
-        <div>
-          <span class="text-brand-accent font-bold text-sm uppercase tracking-wider">Sua frota, sem planilhas</span>
-          <h1 class="text-4xl md:text-5xl lg:text-6xl font-extrabold leading-tight text-brand-text mt-4">Visibilidade total da sua frota em uma única plataforma</h1>
-          <p class="text-lg text-brand-text-secondary mt-6 max-w-xl">Rastreamento, manutenção, combustível, documentos e rotas. Tudo integrado para você tomar decisões com confiança e reduzir custos.</p>
+    <section class="relative min-h-[80vh] flex items-center overflow-hidden">
+      <div class="absolute inset-0 -z-10">
+        <picture>
+          <source
+            srcset="/img/hero-frotamais-480.webp 480w,
+                    /img/hero-frotamais-640.webp 640w,
+                    /img/hero-frotamais-768.webp 768w,
+                    /img/hero-frotamais-1024.webp 1024w,
+                    /img/hero-frotamais-1440.webp 1440w,
+                    /img/hero-frotamais-1920.webp 1920w,
+                    /img/hero-frotamais-3840.webp 3840w"
+            sizes="(max-width: 640px) 100vw, (max-width: 768px) 100vw, (max-width: 1024px) 100vw, (max-width: 1440px) 100vw, 100vw"
+            type="image/webp"
+          />
+          <img
+            src="/img/hero-frotamais.png"
+            alt="Frota de veículos comerciais modernos em ambiente urbano, representando gestão de frotas e telemetria"
+            class="w-full h-full object-cover"
+            width="1672"
+            height="941"
+            loading="eager"
+            fetchpriority="high"
+            decoding="async"
+          />
+        </picture>
+        <div class="absolute inset-0 bg-gradient-to-r from-brand-primary/90 via-brand-primary/70 to-transparent"></div>
+      </div>
+      <div class="relative max-w-6xl mx-auto px-4 md:px-6 py-20 md:py-28">
+        <div class="max-w-2xl">
+          <span class="inline-block bg-white/10 backdrop-blur-sm text-white/90 font-semibold text-sm uppercase tracking-wider px-3 py-1 rounded-full mb-6">Sua frota, sem planilhas</span>
+          <h1 class="text-4xl md:text-5xl lg:text-6xl font-extrabold leading-tight text-white mt-4 drop-shadow-sm">Visibilidade total da sua frota em uma única plataforma</h1>
+          <p class="text-lg md:text-xl text-white/90 mt-6 max-w-xl leading-relaxed">Rastreamento, manutenção, combustível, documentos e rotas. Tudo integrado para você tomar decisões com confiança e reduzir custos.</p>
           <div class="flex flex-wrap gap-4 mt-8">
-            <a href="/sign-in" class="px-6 py-3 bg-brand-primary text-white rounded-lg font-semibold hover:bg-brand-primary-600 transition">Ver demo da plataforma</a>
-            <a href="#funcionalidades" class="px-6 py-3 border border-brand-border rounded-lg font-semibold hover:bg-brand-surface-elevated transition">Conhecer funcionalidades</a>
+            <a href="/sign-in" class="px-6 py-3 bg-white text-brand-primary rounded-lg font-semibold hover:bg-brand-surface transition shadow-lg">Ver demo da plataforma</a>
+            <a href="#funcionalidades" class="px-6 py-3 border-2 border-white/40 text-white rounded-lg font-semibold hover:bg-white/10 transition">Conhecer funcionalidades</a>
           </div>
-          <div class="flex gap-8 mt-10 text-sm">
-            <div><strong class="block text-2xl text-brand-text">+35%</strong><span class="text-brand-text-secondary">eficiência estimada</span></div>
-            <div><strong class="block text-2xl text-brand-text">-60%</strong><span class="text-brand-text-secondary">atrasos em piloto</span></div>
-            <div><strong class="block text-2xl text-brand-text">12K</strong><span class="text-brand-text-secondary">economia mensal (alvo)</span></div>
-          </div>
-        </div>
-        <div class="relative">
-          <div class="bg-brand-surface rounded-2xl shadow-2xl border border-brand-border p-4 md:p-6 overflow-hidden">
-            <img src="/img/hero-truck.jpg" alt="Caminhao branco estacionado em frente a containers de carga, representando logistica e transporte" class="rounded-xl w-full h-64 md:h-80 object-cover" width="1200" height="800" loading="eager" />
-            <p class="text-xs text-brand-text-light mt-3 text-center">Imagem ilustrativa — licenca Unsplash</p>
+          <div class="flex flex-wrap gap-6 md:gap-8 mt-10 text-sm">
+            <div><strong class="block text-2xl md:text-3xl text-white">+35%</strong><span class="text-white/80">eficiência estimada</span></div>
+            <div><strong class="block text-2xl md:text-3xl text-white">-60%</strong><span class="text-white/80">atrasos em piloto</span></div>
+            <div><strong class="block text-2xl md:text-3xl text-white">12K</strong><span class="text-white/80">economia mensal (alvo)</span></div>
           </div>
         </div>
       </div>

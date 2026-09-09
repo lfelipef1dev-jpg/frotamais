@@ -1,0 +1,11 @@
+Frotamais: novo hero gerado no ChatGPT com imagem premium de frota
+
+- Gera hero autoral 1672x941 via ChatGPT Plus conectado
+- Cria versoes responsivas WebP (480 a 3840px)
+- Refatora landing para hero full-width com imagem de fundo,
+  gradiente overlay e texto em branco
+- Preserva srcset/sizes para LCP otimizado
+
+Generated with [Devin](https://devin.ai)
+
+Co-Authored-By: Devin <158243242+devin-ai-integration[bot]@users.noreply.github.com>
