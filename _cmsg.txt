@@ -1,0 +1,4 @@
+Frotamais: adiciona .npmrc com legacy-peer-deps e remove _commit.txt
+
+- Configura legacy-peer-deps para resolver peer conflicts no CI
+- Limpa arquivo de mensagem de commit acidental
