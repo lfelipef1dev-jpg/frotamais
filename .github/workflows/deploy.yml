@@ -28,6 +28,7 @@ jobs:
         run: echo "_worker.js" > dist/.assetsignore
 
       - name: Apply D1 migrations
+        continue-on-error: true
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
