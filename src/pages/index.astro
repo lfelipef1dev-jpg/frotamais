@@ -1,5 +1,6 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import Logo from '../components/Logo.astro';
 import { ArrowRight, Truck, Route, Fuel, Shield, Wrench, FileText } from 'lucide-react';
 
 const features = [
@@ -15,9 +16,8 @@ const features = [
 <Layout title="Frotamais - Gerenciador Inteligente de Frotas" description="Frotamais: rastreamento, roteirização, combustível, manutenção, documentos e rotas em uma única plataforma de gestão de frotas." image="/og-image.jpg">
   <header class="bg-brand-surface border-b border-brand-border sticky top-0 z-50">
     <div class="max-w-6xl mx-auto px-4 md:px-6 h-16 flex items-center justify-between">
-      <a href="/" class="flex items-center gap-2 font-extrabold text-xl text-brand-primary">
-        <Truck className="w-7 h-7" aria-hidden="true" />
-        Frotamais
+      <a href="/" aria-label="Frotamais — página inicial">
+        <Logo size={34} />
       </a>
       <nav class="hidden md:flex items-center gap-6 text-sm font-medium">
         <a href="#funcionalidades" class="text-brand-text-secondary hover:text-brand-text">Funcionalidades</a>
@@ -172,9 +172,8 @@ const features = [
 
   <footer class="bg-brand-surface border-t border-brand-border py-12">
     <div class="max-w-6xl mx-auto px-4 md:px-6 grid md:grid-cols-3 gap-8 items-center text-sm text-brand-text-secondary">
-      <div class="flex items-center gap-2 font-extrabold text-xl text-brand-primary">
-        <Truck className="w-7 h-7" aria-hidden="true" />
-        Frotamais
+      <div class="flex items-center">
+        <Logo size={30} />
       </div>
       <div class="md:text-center">
         <p>&copy; 2026 Frotamais. Projeto de portfólio ExpoStacker.</p>

@@ -5,6 +5,7 @@ import { canAccessRoute, ROLE_LABELS } from '../lib/permissions';
 import { getDb } from '../db/client';
 import { getAlerts, getVehicles } from '../db/queries';
 import { Truck, Menu, LayoutDashboard, MapPin, Users, Route, Wrench, Fuel, Bell, CheckCircle, Map, FileText, BarChart3, UserCog } from 'lucide-react';
+import Logo from '../components/Logo.astro';
 
 interface Props {
   title: string;
@@ -69,9 +70,8 @@ const isActive = (href: string) => pathname === href || pathname.startsWith(href
         class="w-64 bg-white border-r border-brand-border hidden md:flex flex-col fixed md:static inset-y-0 left-0 z-40 transform -translate-x-full md:translate-x-0 transition-transform duration-200"
         id="app-sidebar"
       >
-        <a href="/" class="flex items-center gap-2 px-6 h-16 font-extrabold text-xl text-brand-primary border-b border-brand-border">
-          <Truck class="w-7 h-7" aria-hidden="true" />
-          Frotamais
+        <a href="/" class="flex items-center px-6 h-16 border-b border-brand-border" aria-label="Frotamais — página inicial">
+          <Logo size={30} />
         </a>
         <nav class="flex-1 p-4 space-y-1 overflow-y-auto" aria-label="Principal">
           {menu.map((item) => {

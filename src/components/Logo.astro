@@ -1,0 +1,62 @@
+---
+interface Props {
+  size?: number;
+  showText?: boolean;
+  light?: boolean;
+}
+const { size = 32, showText = true, light = false } = Astro.props;
+---
+
+<span class="inline-flex items-center gap-2.5 select-none" aria-label="Frotamais">
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 64 64"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    aria-hidden="true"
+    class="flex-shrink-0"
+  >
+    <defs>
+      <linearGradient id="fm-g" x1="8" y1="6" x2="56" y2="58" gradientUnits="userSpaceOnUse">
+        <stop offset="0" stop-color="#1E40AF" />
+        <stop offset="0.55" stop-color="#1E3A8A" />
+        <stop offset="1" stop-color="#0EA5E9" />
+      </linearGradient>
+      <linearGradient id="fm-glow" x1="16" y1="10" x2="52" y2="54" gradientUnits="userSpaceOnUse">
+        <stop offset="0" stop-color="#38BDF8" stop-opacity="0.9" />
+        <stop offset="1" stop-color="#38BDF8" stop-opacity="0" />
+      </linearGradient>
+    </defs>
+
+    <!-- Mark: rounded square with gradient -->
+    <rect x="4" y="4" width="56" height="56" rx="16" fill="url(#fm-g)" />
+    <rect x="4" y="4" width="56" height="56" rx="16" fill="url(#fm-glow)" />
+
+    <!-- Stylized F whose top bar becomes a route line ending in a node -->
+    <path
+      d="M22 48V18a4 4 0 0 1 4-4h20"
+      stroke="#ffffff"
+      stroke-width="6"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      fill="none"
+    />
+    <path
+      d="M22 33h14"
+      stroke="#ffffff"
+      stroke-width="6"
+      stroke-linecap="round"
+      fill="none"
+    />
+    <!-- Route node -->
+    <circle cx="45" cy="14" r="4.5" fill="#7DD3FC" />
+    <circle cx="45" cy="14" r="8" stroke="#7DD3FC" stroke-opacity="0.45" stroke-width="2" fill="none" />
+  </svg>
+
+  {showText && (
+    <span class={`font-extrabold tracking-tight leading-none ${light ? 'text-white' : 'text-brand-primary'}`} style={`font-size: ${Math.round(size * 0.66)}px`}>
+      Frota<span class={light ? 'text-sky-300' : 'text-sky-500'}>mais</span>
+    </span>
+  )}
+</span>
