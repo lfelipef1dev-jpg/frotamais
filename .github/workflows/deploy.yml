@@ -27,6 +27,11 @@ jobs:
       - name: Prepare assetsignore
         run: echo "_worker.js" > dist/.assetsignore
 
+      # O token CLOUDFLARE_API_TOKEN atual tem scope apenas de Workers (deploy funciona),
+      # mas nao inclui permissao "Account / D1 / Edit" — a API retorna erro 7403.
+      # Para ativar migrations automaticas, crie/edite o API token em
+      # https://dash.cloudflare.com/profile/api-tokens adicionando a permissao
+      # "Account > D1 > Edit" e remova o continue-on-error abaixo.
       - name: Apply D1 migrations
         continue-on-error: true
         uses: cloudflare/wrangler-action@v3

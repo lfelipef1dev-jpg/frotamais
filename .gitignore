@@ -31,3 +31,10 @@ _shots/
 
 
 _*.py
+
+test-results/
+playwright-report/
+
+tests/.auth/
+
+tests/.auth/
